@@ -31,12 +31,14 @@
         .format-toolbar button { width: auto; flex-grow: 1; padding: 8px 10px; font-size: 14px; background-color: #383838; border: 1px solid #555; text-transform: none; color: #e0e0e0; cursor: pointer; }
         .format-toolbar button:hover { background-color: #4a4a4a; }
         #preview-content { font-family: 'Courier New', Courier, monospace; line-height: 1.7; word-wrap: break-word; }
-        #preview-content h1, #preview-content h2, #preview-content h3 { text-align: left; letter-spacing: 1px; color: #fff; margin-top: 1.5em; margin-bottom: 0.5em; }
+        #preview-content h1, #preview-content h2, #preview-content h3 { text-align: left; letter-spacing: 1px; color: #fff; margin-top: 1.5em; margin-bottom: 0.5em; text-transform: uppercase; }
         #preview-content .author { text-align: left; margin-top: -15px; color: #a0a0a0; font-style: italic; }
         #preview-content .note-content { margin-top: 20px; }
+        #preview-content p { margin: 0 0 1em 0; }
         #preview-content ul, #preview-content ol { padding-left: 25px; }
-        #preview-content a { color: #ff4136; text-decoration: none; } #preview-content a:hover { text-decoration: underline; }
+        #preview-content a { color: #ff4136; }
         #preview-content .box-warning, #preview-content .box-good, #preview-content .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
+        #preview-content .box-warning p, #preview-content .box-good p, #preview-content .box-caution p { margin: 0; }
         #preview-content .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
         #preview-content .box-good { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.05); }
         #preview-content .box-caution { border-color: #f39c12; background-color: rgba(243, 156, 18, 0.05); }
@@ -60,7 +62,7 @@
     <div class="editor-layout">
         <div class="editor-pane">
             <div class="container">
-                <form id="note-creator-form" onsubmit="generateHtml(event)">
+                <form id="note-creator-form">
                     <div class="form-group">
                         <label for="note-title">Judul Catatan</label>
                         <input type="text" id="note-title" placeholder="Tulis judul yang menarik..." required>
@@ -72,18 +74,18 @@
                     <div class="form-group">
                         <label for="note-content">Isi Catatan</label>
                         <div class="format-toolbar">
-                            <button type="button" onclick="wrapText('b')" title="Bold"><i class="fas fa-bold"></i></button>
-                            <button type="button" onclick="wrapText('i')" title="Italic"><i class="fas fa-italic"></i></button>
-                            <button type="button" onclick="wrapText('u')" title="Underline"><i class="fas fa-underline"></i></button>
-                            <button type="button" onclick="wrapText('a')" title="Link"><i class="fas fa-link"></i></button>
-                            <button type="button" onclick="wrapText('h1')" title="Heading 1">H1</button>
-                            <button type="button" onclick="wrapText('h2')" title="Heading 2">H2</button>
-                            <button type="button" onclick="wrapText('h3')" title="Heading 3">H3</button>
-                            <button type="button" onclick="formatList('ul')" title="Unordered List"><i class="fas fa-list-ul"></i></button>
-                            <button type="button" onclick="insertTable()" title="Insert Table"><i class="fas fa-table"></i></button>
-                            <button type="button" onclick="wrapText('box-good')" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
-                            <button type="button" onclick="wrapText('box-caution')" title="Hati-hati (Kuning)"><i class="fas fa-exclamation-circle"></i></button>
-                            <button type="button" onclick="wrapText('box-warning')" title="Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i></button>
+                            <button type="button" id="format-bold" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" id="format-italic" title="Italic"><i class="fas fa-italic"></i></button>
+                            <button type="button" id="format-underline" title="Underline"><i class="fas fa-underline"></i></button>
+                            <button type="button" id="format-link" title="Link"><i class="fas fa-link"></i></button>
+                            <button type="button" id="format-h1" title="Heading 1">H1</button>
+                            <button type="button" id="format-h2" title="Heading 2">H2</button>
+                            <button type="button" id="format-h3" title="Heading 3">H3</button>
+                            <button type="button" id="format-ul" title="Unordered List"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" id="format-table" title="Insert Table"><i class="fas fa-table"></i></button>
+                            <button type="button" id="format-good" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
+                            <button type="button" id="format-caution" title="Hati-hati (Kuning)"><i class="fas fa-exclamation-circle"></i></button>
+                            <button type="button" id="format-warning" title="Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i></button>
                         </div>
                         <textarea id="note-content" placeholder="Tulis atau seleksi teks lalu gunakan toolbar di atas..." required></textarea>
                     </div>
@@ -106,7 +108,7 @@
         <h3><i class="fas fa-check-circle" style="color: #2ecc71;"></i> Kode HTML Siap!</h3>
         <p class="subtitle">Salin kode di bawah ini dan simpan sebagai file .html</p>
         <textarea id="generated-html-code" readonly></textarea>
-        <button id="copy-html-button" onclick="copyCode()">
+        <button id="copy-html-button">
             <i class="fas fa-copy"></i>
             <span class="button-text">Salin Kode</span>
         </button>
@@ -115,86 +117,115 @@
 
 <div class="floating-icon back-button">
     <a href="https://lexiiz3417.github.io/lchp" target="_blank" title="Kembali ke LCHP Notes">
-        <i class="fas fa-chevron-circle-left" style="color: #ffffff;"></i>
+        <i class="fas fa-chevron-circle-left"></i>
     </a>
 </div>
 
 <script>
-const noteTitle = document.getElementById('note-title');
-const noteAuthor = document.getElementById('note-author');
-const noteContent = document.getElementById('note-content');
-const previewContent = document.getElementById('preview-content');
+    // --- Elemen Global ---
+    const noteTitle = document.getElementById('note-title');
+    const noteAuthor = document.getElementById('note-author');
+    const noteContent = document.getElementById('note-content');
+    const previewContent = document.getElementById('preview-content');
+    const noteForm = document.getElementById('note-creator-form');
 
-// --- FUNGSI LIVE PREVIEW (DIPERBAIKI) ---
-function updatePreview() {
-    const title = noteTitle.value || "Judul Catatan...";
-    const author = noteAuthor.value;
-    const rawContent = noteContent.value;
+    // --- FUNGSI LIVE PREVIEW (DIPERBAIKI) ---
+    function updatePreview() {
+        const title = noteTitle.value || "Judul Catatan...";
+        const author = noteAuthor.value;
+        const rawContent = noteContent.value;
+
+        // **INILAH PERBAIKAN UTAMANYA**
+        // Logika ini mengubah baris baru menjadi paragraf, tapi membiarkan tag block (seperti <div>, <h1>, <ul>) apa adanya.
+        const contentHtml = rawContent
+            .split('\n')
+            .map(line => {
+                line = line.trim();
+                if (line.length === 0) return '';
+                // Jika baris dimulai dengan tag HTML block, jangan bungkus dengan <p>
+                if (line.match(/^<(h[1-3]|ul|ol|table|div)/)) {
+                    return line;
+                }
+                return `<p>${line}</p>`;
+            })
+            .join('');
+
+        previewContent.innerHTML = `
+            <h1>${title}</h1>
+            ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
+            <hr style="border-color: #444; margin: 20px 0;">
+            <div class="note-content">${contentHtml}</div>
+        `;
+    }
+
+    // --- Event Listener untuk Live Update ---
+    [noteTitle, noteAuthor, noteContent].forEach(el => el.addEventListener('input', updatePreview));
+    document.addEventListener('DOMContentLoaded', updatePreview);
+
+    // --- FUNGSI TOOLBAR ---
+    function getSelection() {
+        return {
+            start: noteContent.selectionStart,
+            end: noteContent.selectionEnd,
+            text: noteContent.value.substring(noteContent.selectionStart, noteContent.selectionEnd)
+        };
+    }
+
+    function applyFormat(replacement, isBlock = false) {
+        const selection = getSelection();
+        let finalReplacement = replacement;
+        if (isBlock && selection.start > 0 && noteContent.value[selection.start - 1] !== '\n') {
+            finalReplacement = '\n' + finalReplacement;
+        }
+        if (isBlock && selection.end < noteContent.value.length && noteContent.value[selection.end] !== '\n') {
+            finalReplacement = finalReplacement + '\n';
+        }
+        noteContent.focus();
+        document.execCommand('insertText', false, finalReplacement);
+        updatePreview();
+    }
     
-    // UBAH CARA PROSES KONTEN: Ganti baris baru dengan <br> agar tag HTML lain tidak rusak
-    const contentHtml = rawContent.replace(/\n/g, '<br>');
+    // --- Event Listener untuk Toolbar ---
+    document.getElementById('format-bold').addEventListener('click', () => wrapText('b'));
+    document.getElementById('format-italic').addEventListener('click', () => wrapText('i'));
+    document.getElementById('format-underline').addEventListener('click', () => wrapText('u'));
+    document.getElementById('format-link').addEventListener('click', () => wrapText('a'));
+    document.getElementById('format-h1').addEventListener('click', () => wrapText('h1', true));
+    document.getElementById('format-h2').addEventListener('click', () => wrapText('h2', true));
+    document.getElementById('format-h3').addEventListener('click', () => wrapText('h3', true));
+    document.getElementById('format-ul').addEventListener('click', () => formatList('ul'));
+    document.getElementById('format-table').addEventListener('click', () => insertTable());
+    document.getElementById('format-good').addEventListener('click', () => wrapText('box-good', true));
+    document.getElementById('format-caution').addEventListener('click', () => wrapText('box-caution', true));
+    document.getElementById('format-warning').addEventListener('click', () => wrapText('box-warning', true));
 
-    previewContent.innerHTML = `
-        <h1>${title}</h1>
-        ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
-        <hr style="border-color: #444; margin: 20px 0;">
-        <div class="note-content">${contentHtml}</div>
-    `;
-}
-[noteTitle, noteAuthor, noteContent].forEach(el => el.addEventListener('input', updatePreview));
-document.addEventListener('DOMContentLoaded', updatePreview);
+    function wrapText(tag, isBlock = false) {
+        const selection = getSelection();
+        if (selection.text.length === 0 && tag !== 'a') { alert("Seleksi teks terlebih dahulu!"); return; }
 
-// --- FUNGSI TOOLBAR ---
-function getSelection() {
-    return {
-        start: noteContent.selectionStart,
-        end: noteContent.selectionEnd,
-        text: noteContent.value.substring(noteContent.selectionStart, noteContent.selectionEnd)
-    };
-}
-
-function applyFormat(replacement, isBlock = false) {
-    const selection = getSelection();
-    let finalReplacement = replacement;
-    if (isBlock && selection.start > 0 && noteContent.value[selection.start - 1] !== '\n') {
-        finalReplacement = '\n' + finalReplacement;
+        let replacement;
+        if (tag === 'a') {
+            const url = prompt("Masukkan URL untuk link:", "https://");
+            if (url) replacement = `<a href="${url}" target="_blank">${selection.text || 'teks link'}</a>`;
+            else return;
+        } else if (tag.startsWith('box-')) {
+            replacement = `<div class="${tag}"><p>${selection.text}</p></div>`;
+        } else {
+            replacement = `<${tag}>${selection.text}</${tag}>`;
+        }
+        applyFormat(replacement, isBlock);
     }
-    noteContent.value = noteContent.value.substring(0, selection.start) + finalReplacement + noteContent.value.substring(selection.end);
-    updatePreview();
-}
 
-function wrapText(tag) {
-    const selection = getSelection();
-    if (selection.text.length === 0 && tag !== 'a') { alert("Seleksi teks terlebih dahulu!"); return; }
-
-    let replacement;
-    let isBlock = false;
-    if (tag === 'a') {
-        const url = prompt("Masukkan URL untuk link:", "https://");
-        if (url) replacement = `<a href="${url}" target="_blank">${selection.text || 'teks link'}</a>`;
-        else return;
-    } else if (tag.startsWith('box-')) {
-        replacement = `<div class="${tag}"><p>${selection.text}</p></div>`;
-        isBlock = true;
-    } else if (['h1', 'h2', 'h3'].includes(tag)) {
-        replacement = `<${tag}>${selection.text}</${tag}>`;
-        isBlock = true;
-    } else {
-        replacement = `<${tag}>${selection.text}</${tag}>`;
+    function formatList(tag) {
+        const selection = getSelection();
+        if (selection.text.length === 0) { alert("Seleksi beberapa baris teks untuk dijadikan list!"); return; }
+        const items = selection.text.split('\n').map(item => `\t<li>${item}</li>`).join('\n');
+        const replacement = `<${tag}>\n${items}\n</${tag}>`;
+        applyFormat(replacement, true);
     }
-    applyFormat(replacement, isBlock);
-}
 
-function formatList(tag) {
-    const selection = getSelection();
-    if (selection.text.length === 0) { alert("Seleksi beberapa baris teks untuk dijadikan list!"); return; }
-    const items = selection.text.split('\n').map(item => `\t<li>${item}</li>`).join('\n');
-    const replacement = `<${tag}>\n${items}\n</${tag}>`;
-    applyFormat(replacement, true);
-}
-
-function insertTable() {
-    const tableTemplate = `<table class="styled-table">
+    function insertTable() {
+        const tableTemplate = `<table class="styled-table">
     <thead>
         <tr>
             <th>Header 1</th>
@@ -208,21 +239,20 @@ function insertTable() {
         </tr>
     </tbody>
 </table>`;
-    applyFormat(tableTemplate, true);
-}
+        applyFormat(tableTemplate, true);
+    }
+    
+    // --- FUNGSI GENERATE & COPY ---
+    noteForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const title = noteTitle.value;
+        const author = noteAuthor.value;
+        const rawContent = noteContent.value;
+        const contentHtml = rawContent.replace(/\n/g, '\n        ');
+        const description = rawContent.substring(0, 155).replace(/\n/g, ' ') + '...';
+        const fileName = (title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') || 'catatan-baru') + '.html';
 
-// --- FUNGSI GENERATE & COPY HTML ---
-function generateHtml(event) {
-    event.preventDefault();
-    const title = noteTitle.value;
-    const author = noteAuthor.value;
-    const rawContent = noteContent.value;
-    // Gunakan logika yang sama dengan preview untuk konsistensi
-    const contentHtml = rawContent.replace(/\n/g, '<br>\n'); 
-    const description = rawContent.substring(0, 155).replace(/\n/g, ' ') + '...';
-    const fileName = (title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') || 'catatan-baru') + '.html';
-
-    const generatedHtml = \`<!DOCTYPE html>
+        const generatedHtml = \`<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -240,10 +270,11 @@ function generateHtml(event) {
         .container { background-color: #1a1a1a; padding: 25px 40px; border-radius: 8px; border: 1px solid #444; max-width: 700px; width: 100%; margin: 20px auto; }
         h1, h2, h3 { text-align: center; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
         .author { text-align: center; margin-top: -15px; color: #a0a0a0; font-style: italic; }
-        .note-content { word-wrap: break-word; }
+        .note-content { word-wrap: break-word; } .note-content p { margin-bottom: 1.2em; }
         a { color: #ff4136; text-decoration: none; } a:hover { text-decoration: underline; }
         ul, ol { padding-left: 25px; }
         .box-warning, .box-good, .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
+        .box-warning p, .box-good p, .box-caution p { margin: 0; }
         .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
         .box-good { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.05); }
         .box-caution { border-color: #f39c12; background-color: rgba(243, 156, 18, 0.05); }
@@ -266,7 +297,7 @@ function generateHtml(event) {
     \${author ? \`<p class="author">Oleh: \${author}</p>\` : ''}
     <hr style="border-color: #444; margin: 30px 0;">
     <div class="note-content">
-\${contentHtml.replace(/<br>/g, '\\n        <br>\\n')}
+        \${contentHtml.replace(/<br>/g, '\\n        <br>\\n')}
     </div>
 </div>
 <footer>
@@ -274,36 +305,34 @@ function generateHtml(event) {
 </footer>
 </body>
 </html>\`;
-    document.getElementById('generated-html-code').value = generatedHtml;
-    document.getElementById('result-area').style.display = 'block';
-}
-
-function copyCode() {
-    const codeToCopy = document.getElementById('generated-html-code');
-    const button = document.getElementById('copy-html-button');
-    const icon = button.querySelector('i');
-    const text = button.querySelector('.button-text');
-    
-    if (!codeToCopy.value) return;
-
-    navigator.clipboard.writeText(codeToCopy.value).then(() => {
-        icon.className = 'fas fa-check';
-        text.textContent = 'Tersalin!';
-        setTimeout(() => {
-            icon.className = 'fas fa-copy';
-            text.textContent = 'Salin Kode';
-        }, 2000);
-    }).catch(() => {
-        try {
-            codeToCopy.select();
-            document.execCommand('copy');
-            icon.className = 'fas fa-check';
-            text.textContent = 'Teks Terpilih!';
-        } catch (e) {
-            text.textContent = 'Gagal';
-        }
+        document.getElementById('generated-html-code').value = generatedHtml;
+        document.getElementById('result-area').style.display = 'block';
     });
-}
+    
+    document.getElementById('copy-html-button').addEventListener('click', function() {
+        const codeToCopy = document.getElementById('generated-html-code');
+        const icon = this.querySelector('i');
+        const text = this.querySelector('.button-text');
+        
+        if (!codeToCopy.value) return;
+
+        navigator.clipboard.writeText(codeToCopy.value).then(() => {
+            icon.className = 'fas fa-check';
+            text.textContent = 'Tersalin!';
+            setTimeout(() => {
+                icon.className = 'fas fa-copy';
+                text.textContent = 'Salin Kode';
+            }, 2000);
+        }).catch(() => {
+            try {
+                codeToCopy.select();
+                icon.className = 'fas fa-check';
+                text.textContent = 'Teks Terpilih!';
+            } catch (e) {
+                text.textContent = 'Gagal';
+            }
+        });
+    });
 </script>
 </body>
 </html>
