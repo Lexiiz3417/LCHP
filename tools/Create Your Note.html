@@ -45,8 +45,9 @@
         #preview-content table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
         #preview-content th, #preview-content td { border: 1px solid #555; padding: 10px; text-align: left; }
         #preview-content th { background-color: #2c2c2c; }
+        #preview-content img, #preview-content iframe { max-width: 100%; height: auto; border-radius: 4px; }
         #result-area { margin-top: 30px; display: none; background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #444; }
-        #generated-html-code { min-height: 200px; width: 100%; background-color: #0d0d0d; white-space: pre; word-wrap: break-word; }
+        #generated-html-code { min-height: 200px; width: 100%; background-color: #0d0d0d; white-space: pre-wrap; word-wrap: break-word; }
         #copy-html-button { margin-top: 15px; background-color: #ff4136; border-color: #ff4136; color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; padding: 10px 15px; text-transform: uppercase; font-weight: bold; border-radius: 4px; }
         #copy-html-button:hover { background-color: #fff; color: #ff4136; }
         .back-button { position: fixed; bottom: 25px; right: 25px; z-index: 1000; }
@@ -74,21 +75,22 @@
                     <div class="form-group">
                         <label for="note-content">Isi Catatan</label>
                         <div class="format-toolbar">
-                            <button type="button" id="format-bold" title="Bold"><i class="fas fa-bold"></i></button>
-                            <button type="button" id="format-italic" title="Italic"><i class="fas fa-italic"></i></button>
-                            <button type="button" id="format-underline" title="Underline"><i class="fas fa-underline"></i></button>
-                            <button type="button" id="format-link" title="Link"><i class="fas fa-link"></i></button>
                             <button type="button" id="format-h1" title="Heading 1">H1</button>
                             <button type="button" id="format-h2" title="Heading 2">H2</button>
                             <button type="button" id="format-h3" title="Heading 3">H3</button>
+                            <button type="button" id="format-p" title="Paragraf"><i class="fas fa-paragraph"></i></button>
                             <button type="button" id="format-ul" title="Unordered List"><i class="fas fa-list-ul"></i></button>
-                            <button type="button" id="format-table" title="Insert Table"><i class="fas fa-table"></i></button>
+                            <button type="button" id="format-ol" title="Ordered List"><i class="fas fa-list-ol"></i></button>
+                            <button type="button" id="format-table" title="Tabel"><i class="fas fa-table"></i></button>
+                             <button type="button" id="format-bold" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" id="format-italic" title="Italic"><i class="fas fa-italic"></i></button>
+                            <button type="button" id="format-underline" title="Underline"><i class="fas fa-underline"></i></button>
+                            <button type="button" id="format-link" title="Link"><i class="fas fa-link"></i></button>
+                            <button type="button" id="format-image" title="Sematkan Gambar"><i class="fas fa-image"></i></button>
+                            <button type="button" id="format-video" title="Sematkan Video"><i class="fas fa-video"></i></button>
                             <button type="button" id="format-good" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
                             <button type="button" id="format-caution" title="Hati-hati (Kuning)"><i class="fas fa-exclamation-circle"></i></button>
                             <button type="button" id="format-warning" title="Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i></button>
-                            <button type="button" id="format-paragraph" title="Paragraf"><i class="fas fa-paragraph"></i></button>
-                            <button type="button" id="format-number" title="Numbered List"><i class="fas fa-list-ol"></i></button>
-                            <button type="button" id="format-img" title="Sematkan Gambar"><i class="fas fa-image"></i></button>
                         </div>
                         <textarea id="note-content" placeholder="Tulis atau seleksi teks lalu gunakan toolbar di atas..." required></textarea>
                     </div>
@@ -125,39 +127,43 @@
 </div>
 
 <script>
+    // --- Elemen Global ---
     const noteTitle = document.getElementById('note-title');
     const noteAuthor = document.getElementById('note-author');
     const noteContent = document.getElementById('note-content');
     const previewContent = document.getElementById('preview-content');
     const noteForm = document.getElementById('note-creator-form');
 
+    // --- FUNGSI LIVE PREVIEW (DIPERBAIKI & DISIMPLIFY) ---
     function updatePreview() {
         const title = noteTitle.value || "Judul Catatan...";
         const author = noteAuthor.value;
-        let rawContent = noteContent.value;
-
-        rawContent = rawContent.replace(/\n/g, '<br>'); // enter jadi <br>
-
-        const lines = rawContent.split(/<br>/).map(line => {
-            line = line.trim();
-            if (line.length === 0) return '';
-            if (line.match(/^<(h[1-3]|ul|ol|table|div|p)/)) {
-                return line;
-            }
-            return `<p>${line}</p>`;
-        });
+        const contentHtml = noteContent.value; // Langsung ambil nilai karena sudah mengandung HTML
 
         previewContent.innerHTML = `
             <h1>${title}</h1>
             ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
             <hr style="border-color: #444; margin: 20px 0;">
-            <div class="note-content">${lines.join('')}</div>
+            <div class="note-content">${contentHtml}</div>
         `;
     }
+    
+    // --- Event Listener untuk Enter -> <br> ---
+    noteContent.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            // Hentikan perilaku default (membuat baris baru)
+            e.preventDefault();
+            // Sisipkan tag <br> di posisi kursor
+            document.execCommand('insertHTML', false, '<br>');
+        }
+    });
 
+
+    // --- Event Listener untuk Live Update ---
     [noteTitle, noteAuthor, noteContent].forEach(el => el.addEventListener('input', updatePreview));
     document.addEventListener('DOMContentLoaded', updatePreview);
 
+    // --- FUNGSI TOOLBAR ---
     function getSelection() {
         return {
             start: noteContent.selectionStart,
@@ -166,49 +172,63 @@
         };
     }
 
-    function applyFormat(replacement, isBlock = false) {
-        const selection = getSelection();
-        const before = noteContent.value.substring(0, selection.start);
-        const after = noteContent.value.substring(selection.end);
-
-        let finalReplacement = replacement;
-        if (isBlock && selection.start > 0 && noteContent.value[selection.start - 1] !== '\n') {
-            finalReplacement = '\n' + finalReplacement;
-        }
-        if (isBlock && selection.end < noteContent.value.length && noteContent.value[selection.end] !== '\n') {
-            finalReplacement = finalReplacement + '\n';
-        }
-
-        noteContent.value = before + finalReplacement + after;
-        const newCursorPos = before.length + finalReplacement.length;
-        noteContent.setSelectionRange(newCursorPos, newCursorPos);
+    function applyFormat(replacement) {
         noteContent.focus();
-        updatePreview();
+        // Menggunakan insertText lebih aman dan didukung luas
+        if (document.execCommand('insertText', false, replacement)) {
+             updatePreview();
+        }
     }
+
+    // --- Event Listener untuk Toolbar ---
+    document.getElementById('format-bold').addEventListener('click', () => wrapText('b'));
+    document.getElementById('format-italic').addEventListener('click', () => wrapText('i'));
+    document.getElementById('format-underline').addEventListener('click', () => wrapText('u'));
+    document.getElementById('format-p').addEventListener('click', () => wrapText('p', true));
+    document.getElementById('format-link').addEventListener('click', () => handleLink());
+    document.getElementById('format-h1').addEventListener('click', () => wrapText('h1', true));
+    document.getElementById('format-h2').addEventListener('click', () => wrapText('h2', true));
+    document.getElementById('format-h3').addEventListener('click', () => wrapText('h3', true));
+    document.getElementById('format-ul').addEventListener('click', () => formatList('ul'));
+    document.getElementById('format-ol').addEventListener('click', () => formatList('ol')); // BARU
+    document.getElementById('format-table').addEventListener('click', () => insertTable());
+    document.getElementById('format-good').addEventListener('click', () => wrapInBox('box-good'));
+    document.getElementById('format-caution').addEventListener('click', () => wrapInBox('box-caution'));
+    document.getElementById('format-warning').addEventListener('click', () => wrapInBox('box-warning'));
+    document.getElementById('format-image').addEventListener('click', () => insertMedia('image')); // BARU
+    document.getElementById('format-video').addEventListener('click', () => insertMedia('video')); // BARU
 
     function wrapText(tag, isBlock = false) {
         const selection = getSelection();
-        if (selection.text.length === 0 && tag !== 'a' && tag !== 'img') {
-            alert("Seleksi teks terlebih dahulu!");
+        if (selection.text.length === 0) {
+            alert("Seleksi teks yang ingin diformat!");
             return;
         }
-
-        let replacement = '';
-        if (tag === 'a') {
-            const url = prompt("Masukkan URL:", "https://");
-            if (url) replacement = `<a href="${url}" target="_blank">${selection.text || 'tautan'}</a>`;
-            else return;
-        } else if (tag === 'img') {
-            const src = prompt("Masukkan URL Gambar:", "https://");
-            if (src) replacement = `<img src="${src}" alt="Gambar" style="max-width:100%;">`;
-            else return;
-        } else if (tag.startsWith('box-')) {
-            replacement = `<div class="${tag}"><p>${selection.text}</p></div>`;
-        } else {
-            replacement = `<${tag}>${selection.text}</${tag}>`;
+        let prefix = isBlock && selection.start > 0 && noteContent.value[selection.start - 1] !== '\n' ? '\n' : '';
+        let suffix = isBlock && selection.end < noteContent.value.length && noteContent.value[selection.end] !== '\n' ? '\n' : '';
+        const replacement = `${prefix}<${tag}>${selection.text}</${tag}>${suffix}`;
+        applyFormat(replacement);
+    }
+    
+    function wrapInBox(className) {
+        const selection = getSelection();
+        if (selection.text.length === 0) {
+            alert("Seleksi teks yang ingin dimasukkan ke dalam kotak info!");
+            return;
         }
-
-        applyFormat(replacement, isBlock);
+        // Ganti baris baru di dalam seleksi dengan paragraf terpisah agar formatnya bagus
+        const content = selection.text.split('\n').map(line => `<p>${line}</p>`).join('');
+        const replacement = `<div class="${className}">${content}</div>`;
+        applyFormat(replacement);
+    }
+    
+    function handleLink() {
+        const selection = getSelection();
+        const url = prompt("Masukkan URL untuk link:", "https://");
+        if (!url) return;
+        const text = selection.text || 'teks link';
+        const replacement = `<a href="${url}" target="_blank">${text}</a>`;
+        applyFormat(replacement);
     }
 
     function formatList(tag) {
@@ -217,38 +237,136 @@
             alert("Seleksi beberapa baris teks untuk dijadikan list!");
             return;
         }
-        const items = selection.text.split('\n').map(item => `\t<li>${item}</li>`).join('\n');
-        const replacement = `<${tag}>\n${items}\n</${tag}>`;
-        applyFormat(replacement, true);
+        const items = selection.text.split('\n').map(item => `\t<li>${item.trim()}</li>`).join('\n');
+        const replacement = `<${tag}>\n${items}\n</${tag}>\n`;
+        applyFormat(replacement);
+    }
+    
+    function insertMedia(type) {
+        let url, replacement;
+        if (type === 'image') {
+            url = prompt("Masukkan URL gambar:", "https://");
+            if(url) replacement = `<img src="${url}" alt="Gambar">`;
+        } else if (type === 'video') {
+            url = prompt("Masukkan URL SEMATAN (EMBED) video (misal dari YouTube):", "https://www.youtube.com/embed/...");
+            if(url) replacement = `<iframe width="560" height="315" src="${url}" frameborder="0" allowfullscreen></iframe>`;
+        }
+        if (replacement) {
+            applyFormat(replacement);
+        }
     }
 
     function insertTable() {
-        const tableTemplate = `<table class="styled-table">
+        const tableTemplate = `<table>
     <thead>
-        <tr><th>Header 1</th><th>Header 2</th></tr>
+        <tr>
+            <th>Header 1</th>
+            <th>Header 2</th>
+        </tr>
     </thead>
     <tbody>
-        <tr><td>Data 1</td><td>Data 2</td></tr>
+        <tr>
+            <td>Data 1</td>
+            <td>Data 2</td>
+        </tr>
     </tbody>
 </table>`;
-        applyFormat(tableTemplate, true);
+        applyFormat(tableTemplate);
     }
 
-    document.getElementById('format-bold').addEventListener('click', () => wrapText('b'));
-    document.getElementById('format-italic').addEventListener('click', () => wrapText('i'));
-    document.getElementById('format-underline').addEventListener('click', () => wrapText('u'));
-    document.getElementById('format-link').addEventListener('click', () => wrapText('a'));
-    document.getElementById('format-img').addEventListener('click', () => wrapText('img'));
-    document.getElementById('format-h1').addEventListener('click', () => wrapText('h1', true));
-    document.getElementById('format-h2').addEventListener('click', () => wrapText('h2', true));
-    document.getElementById('format-h3').addEventListener('click', () => wrapText('h3', true));
-    document.getElementById('format-ul').addEventListener('click', () => formatList('ul'));
-    document.getElementById('format-number').addEventListener('click', () => formatList('ol'));
-    document.getElementById('format-table').addEventListener('click', () => insertTable());
-    document.getElementById('format-good').addEventListener('click', () => wrapText('box-good', true));
-    document.getElementById('format-caution').addEventListener('click', () => wrapText('box-caution', true));
-    document.getElementById('format-warning').addEventListener('click', () => wrapText('box-warning', true));
-    document.getElementById('format-paragraph').addEventListener('click', () => wrapText('p', true));
+    // --- FUNGSI GENERATE & COPY ---
+    noteForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const title = noteTitle.value;
+        const author = noteAuthor.value;
+        const contentHtml = noteContent.value; // Langsung pakai, karena sudah ada <br>
+        const description = noteContent.value.replace(/<[^>]*>/g, '').substring(0, 155).replace(/\n/g, ' ') + '...';
+        const fileName = (title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') || 'catatan-baru') + '.html';
 
-    // ... fungsi generate HTML tetap sama ...
+        const generatedHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - LCHP Notes</title>
+    <meta name="description" content="${description}">
+    <link rel="icon" type="image/png" href="https://lexiiz3417.github.io/lchp/lchpfav.png">
+    <meta property="og:title" content="${title} - LCHP Notes">
+    <meta property="og:description" content="${description}">
+    <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
+    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/notes/${fileName}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background-color: #0d0d0d; color: #e0e0e0; line-height: 1.7; margin: 0; padding: 20px; }
+        .container { background-color: #1a1a1a; padding: 25px 40px; border-radius: 8px; border: 1px solid #444; max-width: 700px; width: 100%; margin: 20px auto; }
+        h1, h2, h3 { text-align: left; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
+        .author { text-align: left; margin-top: -15px; color: #a0a0a0; font-style: italic; }
+        .note-content { word-wrap: break-word; } .note-content p { margin-bottom: 1.2em; }
+        a { color: #ff4136; text-decoration: none; } a:hover { text-decoration: underline; }
+        ul, ol { padding-left: 25px; }
+        img, iframe { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 1em 0; }
+        .box-warning, .box-good, .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
+        .box-warning p, .box-good p, .box-caution p { margin: 0; }
+        .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
+        .box-good { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.05); }
+        .box-caution { border-color: #f39c12; background-color: rgba(243, 156, 18, 0.05); }
+        table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+        table th, table td { border: 1px solid #555; padding: 10px; text-align: left; }
+        table th { background-color: #2c2c2c; }
+        .back-button { position: fixed; bottom: 25px; right: 25px; z-index: 1000; }
+        .back-button a { display: flex; align-items: center; text-decoration: none; font-size: 22px; color: #fff; }
+        footer { margin-top: 40px; color: #888; font-size: 14px; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="floating-icon back-button">
+    <a href="https://lexiiz3417.github.io/lchp/" target="_blank" title="Kembali ke LCHP Notes">
+        <i class="fas fa-chevron-circle-left"></i>
+    </a>
+</div>
+<div class="container">
+    <h1>${title}</h1>
+    ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
+    <hr style="border-color: #444; margin: 30px 0;">
+    <div class="note-content">
+${contentHtml}
+    </div>
+</div>
+<footer>
+    oleh Lexiiz3417
+</footer>
+</body>
+</html>`;
+        document.getElementById('generated-html-code').value = generatedHtml;
+        document.getElementById('result-area').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight); // Auto-scroll ke bawah
+    });
+
+    document.getElementById('copy-html-button').addEventListener('click', function() {
+        const codeToCopy = document.getElementById('generated-html-code');
+        const icon = this.querySelector('i');
+        const text = this.querySelector('.button-text');
+
+        if (!codeToCopy.value) return;
+
+        navigator.clipboard.writeText(codeToCopy.value).then(() => {
+            icon.className = 'fas fa-check';
+            text.textContent = 'Tersalin!';
+            setTimeout(() => {
+                icon.className = 'fas fa-copy';
+                text.textContent = 'Salin Kode';
+            }, 2000);
+        }).catch(() => {
+            try {
+                codeToCopy.select();
+                document.execCommand('copy');
+                icon.className = 'fas fa-check';
+                text.textContent = 'Tersalin!';
+            } catch (e) {
+                text.textContent = 'Gagal';
+            }
+        });
+    });
 </script>
+</body>
+</html>
