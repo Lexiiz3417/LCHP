@@ -12,7 +12,7 @@
     <meta property="og:title" content="Generator Prompt Workout - LCHP Tools">
     <meta property="og:description" content="Buat prompt workout yang detail dan personal untuk AI dengan mengisi kuesioner singkat.">
     <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
-    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/tools/namafile.html"> 
+    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/tools/Workout%20Generator.html"> 
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,178 +20,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Semua CSS tetap sama... */
-        body {
-            font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            background-color: #1a1a1a;
-            padding: 25px 40px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            max-width: 700px;
-            width: 100%;
-        }
-        h1 {
-            text-align: center;
-            color: #ffffff;
-            margin-bottom: 10px;
-            font-size: 28px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        p.subtitle {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
-            color: #a0a0a0;
-        }
-        .warning-text {
-            color: #ff4136; /* Merah */
-            font-weight: bold;
-            text-align: center;
-            border: 1px solid #ff4136;
-            padding: 12px;
-            margin-bottom: 30px;
-            border-radius: 6px;
-            background-color: rgba(255, 65, 54, 0.05);
-        }
-        .form-group {
-            margin-bottom: 22px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #f0f0f0;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #555;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-            font-family: inherit;
-            background-color: #2c2c2c;
-            color: #e0e0e0;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 50px;
-        }
-        input:focus, textarea:focus {
-            border-color: #ffffff;
-            outline: none;
-        }
-        button {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #fff;
-            border-radius: 4px;
-            background-color: #1a1a1a;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            font-family: inherit;
-            text-transform: uppercase;
-        }
-        button:hover {
-            background-color: #ffffff;
-            color: #0d0d0d;
-        }
-        #result-container {
-            margin-top: 30px;
-            padding: 25px;
-            background-color: #1c1c1c;
-            border-radius: 6px;
-            border: 1px solid #444;
-            display: none;
-        }
-        #result-container h3 {
-            margin-top: 0;
-            color: #fff;
-            text-transform: uppercase;
-        }
-        #prompt-output {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 14px;
-            color: #e0e0e0;
-            background-color: #0d0d0d;
-            padding: 15px;
-            border-radius: 4px;
-            border: 1px solid #555;
-            user-select: all;
-        }
-        #copy-button {
-            margin-top: 15px;
-            background-color: #ff4136;
-            border: 1px solid #ff4136;
-            color: #fff;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        #copy-button:hover {
-            background-color: #fff;
-            color: #ff4136;
-        }
-        footer {
-            margin-top: 40px;
-            color: #888;
-            font-size: 14px;
-            text-align: center;
-        }
-        .back-button {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 1000;
-            background-color: #2c2c2c;
-            padding: 10px;
-            border-radius: 50px;
-            border: 1px solid #555;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        }
-        .back-button a {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #ffffff;
-            font-size: 18px;
-        }
-        .back-button .icon-text {
-            visibility: hidden;
-            opacity: 0;
-            width: 0;
-            margin-left: 0;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-        .back-button:hover {
-            padding-right: 20px;
-        }
-        .back-button:hover .icon-text {
-            visibility: visible;
-            opacity: 1;
-            width: auto;
-            margin-left: 8px;
-        }
+        /* CSS Anda tidak diubah, jadi saya singkat di sini untuk keringkasan */
+        body { font-family: 'Courier Prime', 'Courier New', Courier, monospace; background-color: #0d0d0d; color: #e0e0e0; line-height: 1.6; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { background-color: #1a1a1a; padding: 25px 40px; border-radius: 8px; border: 1px solid #444; max-width: 700px; width: 100%; }
+        h1 { text-align: center; color: #ffffff; margin-bottom: 10px; font-size: 28px; text-transform: uppercase; letter-spacing: 2px; }
+        p.subtitle { text-align: center; margin-top: 0; margin-bottom: 25px; color: #a0a0a0; }
+        .warning-text { color: #ff4136; font-weight: bold; text-align: center; border: 1px solid #ff4136; padding: 12px; margin-bottom: 30px; border-radius: 6px; background-color: rgba(255, 65, 54, 0.05); }
+        .form-group { margin-bottom: 22px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #f0f0f0; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #555; border-radius: 4px; box-sizing: border-box; font-size: 16px; font-family: inherit; background-color: #2c2c2c; color: #e0e0e0; }
+        select { appearance: none; -webkit-appearance: none; -moz-appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e0e0e0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.3-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: .65em auto; }
+        textarea { resize: vertical; min-height: 50px; }
+        input:focus, textarea:focus, select:focus { border-color: #ffffff; outline: none; }
+        button { width: 100%; padding: 15px; border: 1px solid #fff; border-radius: 4px; background-color: #1a1a1a; color: white; font-size: 18px; font-weight: bold; cursor: pointer; transition: background-color 0.2s ease, color 0.2s ease; font-family: inherit; text-transform: uppercase; }
+        button:hover { background-color: #ffffff; color: #0d0d0d; }
+        #result-container { margin-top: 30px; padding: 25px; background-color: #1c1c1c; border-radius: 6px; border: 1px solid #444; display: none; }
+        #result-container h3 { margin-top: 0; color: #fff; text-transform: uppercase; }
+        #prompt-output { white-space: pre-wrap; word-wrap: break-word; font-size: 14px; color: #e0e0e0; background-color: #0d0d0d; padding: 15px; border-radius: 4px; border: 1px solid #555; user-select: all; }
+        #copy-button { margin-top: 15px; background-color: #ff4136; border: 1px solid #ff4136; color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+        #copy-button:hover { background-color: #fff; color: #ff4136; }
+        footer { margin-top: 40px; color: #888; font-size: 14px; text-align: center; }
+        .back-button { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background-color: #2c2c2c; padding: 10px; border-radius: 50px; border: 1px solid #555; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transition: all 0.3s ease; }
+        .back-button a { display: flex; align-items: center; text-decoration: none; color: #ffffff; font-size: 18px; }
+        .back-button .icon-text { visibility: hidden; opacity: 0; width: 0; margin-left: 0; transition: all 0.3s ease; font-size: 14px; }
+        .back-button:hover { padding-right: 20px; }
+        .back-button:hover .icon-text { visibility: visible; opacity: 1; width: auto; margin-left: 8px; }
+        .form-group-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     </style>
 </head>
 <body>
@@ -205,47 +59,117 @@
 
 <div class="container">
     <h1>Personal Trainer AI</h1>
-    <p class="subtitle">Buat prompt workout paling detailbuat diri lo.</p>
+    <p class="subtitle">Buat prompt workout paling detail buat diri lo.</p>
     
     <p class="warning-text">Isi sesuai dengan kondisi tubuh lo sekarang, kesampingkan ego!</p>
 
     <form id="workout-form">
         <div class="form-group">
-            <label for="main_goal">1. Tujuan utama & spesifik lo?</label>
-            <textarea id="main_goal" rows="2" placeholder="Contoh: Turun 5kg dalam 3 bulan, gedein lengan, persiapan lari 10K" required></textarea>
+            <label for="main_goal">1. Apa tujuan utama latihan Anda?</label>
+            <select id="main_goal" required>
+                <option value="Menurunkan Lemak Tubuh">Menurunkan Lemak Tubuh</option>
+                <option value="Membangun Massa Otot (Hypertrophy)">Membangun Massa Otot (Hypertrophy)</option>
+                <option value="Meningkatkan Kekuatan Maksimal">Meningkatkan Kekuatan Maksimal</option>
+                <option value="Meningkatkan Stamina & Kesehatan Jantung">Meningkatkan Stamina & Kesehatan Jantung</option>
+                <option value="Fleksibilitas & Pemulihan Cedera">Fleksibilitas & Pemulihan Cedera</option>
+                <option value="Kesehatan & Kebugaran Umum">Kesehatan & Kebugaran Umum</option>
+            </select>
         </div>
         <div class="form-group">
-            <label for="age">2. Usia?</label>
-            <input type="number" id="age" placeholder="Contoh: 28" required>
+            <label for="secondary_goal">2. Jelaskan target spesifiknya (opsional)</label>
+            <textarea id="secondary_goal" rows="2" placeholder="Contoh: Turun 5kg, fokus besarin lengan & dada, bisa lari 5K"></textarea>
         </div>
-        <div class="form-group">
-            <label for="gender">3. Jenis Kelamin?</label>
-            <input type="text" id="gender" placeholder="Contoh: Pria" required>
+        <div class="form-group-split">
+            <div class="form-group">
+                <label for="age">3. Usia</label>
+                <input type="number" id="age" placeholder="Contoh: 28" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">4. Jenis Kelamin</label>
+                <select id="gender" required>
+                    <option value="Pria">Pria</option>
+                    <option value="Wanita">Wanita</option>
+                </select>
+            </div>
         </div>
+
         <div class="form-group">
-            <label for="experience">4. Pengalaman olahraga lo?</label>
-            <textarea id="experience" rows="2" placeholder="Contoh: Pemula total, pernah gym 1 tahun lalu vakum, rutin main futsal" required></textarea>
+            <label for="experience_level">5. Seberapa konsisten Anda berlatih (3 bln terakhir)?</label>
+            <select id="experience_level" required>
+                <option value="Pemula / Tidak Pernah">Pemula / Tidak Pernah</option>
+                <option value="Jarang (Kurang dari 1x/minggu)">Jarang (Kurang dari 1x/minggu)</option>
+                <option value="Cukup Konsisten (1-2x/minggu)">Cukup Konsisten (1-2x/minggu)</option>
+                <option value="Sangat Konsisten (3-4x/minggu)">Sangat Konsisten (3-4x/minggu)</option>
+                <option value="Atlet / Sangat Aktif (5+x/minggu)">Atlet / Sangat Aktif (5+x/minggu)</option>
+            </select>
         </div>
-        <div class="form-group">
-            <label for="health">5. Kondisi medis / cedera / area tubuh yg perlu perhatian?</label>
+         <div class="form-group">
+            <label for="health">6. Kondisi medis/cedera yang perlu perhatian khusus?</label>
             <textarea id="health" rows="2" placeholder="Contoh: Nyeri punggung bawah, lutut lemah (hindari lompatan), asma" required></textarea>
         </div>
-        <div class="form-group">
-            <label for="schedule">6. Jadwal & durasi yang realistis buat lo?</label>
-            <textarea id="schedule" rows="2" placeholder="Contoh: 3 hari seminggu, 45-60 menit per sesi" required></textarea>
+
+        <div class="form-group-split">
+             <div class="form-group">
+                <label for="schedule_days">7. Hari per minggu?</label>
+                <select id="schedule_days" required>
+                    <option value="2">2 Hari</option>
+                    <option value="3" selected>3 Hari</option>
+                    <option value="4">4 Hari</option>
+                    <option value="5">5 Hari</option>
+                    <option value="6">6 Hari</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="schedule_duration">8. Durasi per sesi?</label>
+                <select id="schedule_duration" required>
+                    <option value="15-30 menit">15-30 menit</option>
+                    <option value="30-45 menit">30-45 menit</option>
+                    <option value="45-60 menit" selected>45-60 menit</option>
+                    <option value="60-90 menit">60-90 menit</option>
+                </select>
+            </div>
         </div>
         <div class="form-group">
-            <label for="equipment">7. Semua alat yang lo punya?</label>
+            <label for="location">9. Di mana lokasi latihan utama Anda?</label>
+            <select id="location" required>
+                <option value="Rumah (Home Gym)">Rumah (Home Gym)</option>
+                <option value="Gym Komersial">Gym Komersial</option>
+                <option value="Outdoor / Taman">Outdoor / Taman</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="equipment">10. Sebutkan semua alat yang Anda punya</label>
             <textarea id="equipment" rows="2" placeholder="Contoh: Tanpa alat, cuma punya sepasang dumbbell 5kg dan matras yoga" required></textarea>
         </div>
+
         <div class="form-group">
-            <label for="preferences">8. Latihan yang lo suka / ga suka?</label>
-            <textarea id="preferences" placeholder="Contoh: Suka angkat beban & HIIT. Ga suka lari."></textarea>
+            <label for="lifestyle_job">11. Bagaimana tingkat aktivitas pekerjaan harian Anda?</label>
+             <select id="lifestyle_job" required>
+                <option value="Dominan duduk (Pekerja kantoran, WFH)">Dominan duduk (Pekerja kantoran, WFH)</option>
+                <option value="Cukup aktif (Banyak jalan/berdiri)">Cukup aktif (Banyak jalan/berdiri)</option>
+                <option value="Sangat aktif (Pekerjaan fisik berat)">Sangat aktif (Pekerjaan fisik berat)</option>
+            </select>
+        </div>
+        <div class="form-group-split">
+            <div class="form-group">
+                <label for="lifestyle_sleep">12. Rata-rata jam tidur?</label>
+                <input type="text" id="lifestyle_sleep" placeholder="Contoh: 6-7 jam" required>
+            </div>
+            <div class="form-group">
+                <label for="lifestyle_energy">13. Kapan merasa paling berenergi?</label>
+                 <select id="lifestyle_energy" required>
+                    <option value="Pagi hari">Pagi hari</option>
+                    <option value="Siang hari">Siang hari</option>
+                    <option value="Sore hari">Sore hari</option>
+                    <option value="Malam hari">Malam hari</option>
+                </select>
+            </div>
         </div>
         <div class="form-group">
-            <label for="lifestyle">9. Gaya hidup lo? (Pekerjaan, tidur, stres)</label>
-            <textarea id="lifestyle" placeholder="Contoh: Pekerja kantoran (banyak duduk), tidur 6 jam, stres sedang"></textarea>
+            <label for="preferences">14. Latihan yang Anda suka / tidak suka?</label>
+            <textarea id="preferences" rows="2" placeholder="Contoh: Suka angkat beban & HIIT. Ga suka lari."></textarea>
         </div>
+        
         <button type="submit">Ciptakan Prompt!</button>
     </form>
 
@@ -264,7 +188,6 @@
 </footer>
 
 <script>
-    // Seluruh JavaScript tetap sama...
     const workoutForm = document.getElementById('workout-form');
     const resultContainer = document.getElementById('result-container');
     const promptOutput = document.getElementById('prompt-output');
@@ -273,15 +196,20 @@
     workoutForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const data = {
-            goal: document.getElementById('main_goal').value,
+            main_goal: document.getElementById('main_goal').value,
+            secondary_goal: document.getElementById('secondary_goal').value || 'Tidak ada target spesifik tambahan.',
             age: document.getElementById('age').value,
             gender: document.getElementById('gender').value,
-            experience: document.getElementById('experience').value,
+            experience_level: document.getElementById('experience_level').value,
             health: document.getElementById('health').value,
-            schedule: document.getElementById('schedule').value,
+            schedule_days: document.getElementById('schedule_days').value,
+            schedule_duration: document.getElementById('schedule_duration').value,
+            location: document.getElementById('location').value,
             equipment: document.getElementById('equipment').value,
+            lifestyle_job: document.getElementById('lifestyle_job').value,
+            lifestyle_sleep: document.getElementById('lifestyle_sleep').value,
+            lifestyle_energy: document.getElementById('lifestyle_energy').value,
             preferences: document.getElementById('preferences').value || 'Tidak ada preferensi khusus, berikan rekomendasi terbaik.',
-            lifestyle: document.getElementById('lifestyle').value || 'Tidak ada data tambahan.',
         };
         const prompt = `
 **PERAN DAN TUJUAN ANDA:**
@@ -291,15 +219,25 @@ Anda adalah seorang Pelatih Pribadi (Personal Trainer) dan Ahli Gizi bersertifik
 
 **DATA PROFIL KLIEN:**
 
-* **Tujuan Utama & Paling Spesifik:** ${data.goal}
+**1. FONDASI & TUJUAN:**
+* **Tujuan Utama:** ${data.main_goal}
+* **Target Spesifik / Sekunder:** ${data.secondary_goal}
 * **Usia:** ${data.age} tahun
 * **Jenis Kelamin:** ${data.gender}
-* **Pengalaman Olahraga & Tingkat Kebugaran:** ${data.experience}
 * **Kondisi Medis & Riwayat Cedera:** ${data.health}
-* **Komitmen Waktu (Jadwal & Durasi):** ${data.schedule}
+
+**2. LEVEL KEBUGARAN & LOGISTIK:**
+* **Tingkat Konsistensi Latihan:** ${data.experience_level}
+* **Lokasi Latihan Utama:** ${data.location}
 * **Peralatan yang Tersedia:** ${data.equipment}
-* **Preferensi Latihan (Suka/Tidak Suka):** ${data.preferences}
-* **Konteks Gaya Hidup (Pekerjaan, Tidur, Stres):** ${data.lifestyle}
+
+**3. JADWAL & GAYA HIDUP:**
+* **Komitmen Latihan:** ${data.schedule_days} hari seminggu, @ ${data.schedule_duration} per sesi
+* **Aktivitas Pekerjaan Harian:** ${data.lifestyle_job}
+* **Pola Tidur & Energi:** Tidur rata-rata ${data.lifestyle_sleep}. Paling berenergi di waktu ${data.lifestyle_energy}.
+
+**4. PREFERENSI LATIHAN:**
+* **Latihan yang Disukai/Tidak Disukai:** ${data.preferences}
 
 --------------------
 
@@ -321,7 +259,7 @@ Anda adalah seorang Pelatih Pribadi (Personal Trainer) dan Ahli Gizi bersertifik
     * Berikan contoh rutin pendinginan dan peregangan statis (5-10 menit) setelah selesai.
 
 4.  **Rasionalisasi & Penjelasan (PENTING):**
-    * Jelaskan **MENGAPA** Anda memilih struktur program dan jenis latihan tersebut untuk saya. Hubungkan alasan Anda langsung dengan data profil saya (tujuan, usia, pengalaman, cedera, peralatan).
+    * Jelaskan **MENGAPA** Anda memilih struktur program dan jenis latihan tersebut untuk saya. Hubungkan alasan Anda langsung dengan data profil saya (tujuan, usia, pengalaman, cedera, peralatan, gaya hidup).
 
 5.  **Saran Nutrisi Pendukung:**
     * Berikan 3-5 tips nutrisi praktis yang dapat mendukung tujuan latihan saya (contoh: asupan protein, hidrasi, makanan sebelum/sesudah latihan).
