@@ -1,34 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LCHP NOTES</title>
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://lexiiz3417.github.io/lchp/lchpfav.png">
     
-    <!-- Open Graph meta tags for social sharing -->
     <meta property="og:title" content="LCHP NOTES">
     <meta property="og:description" content="Sebuah tempat yang berisi catatan-catatan karya member dan admin LC: Healthy Program">
     <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
     <meta property="og:url" content="https://lexiiz3417.github.io">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://lexiiz3417.github.io/lchp/lchp.css">
+    
     <script src="https://lexiiz3417.github.io/lchp/lchp.js"></script>
+
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #1a1a1a;
+            padding: 25px 40px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #a0a0a0;
+        }
+        .search-container {
+            margin-bottom: 30px;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            text-align: center;
+        }
+        #searchInput:focus {
+            border-color: #ffffff;
+            outline: none;
+        }
+        #searchResults {
+            text-align: left;
+        }
+        #searchResults a {
+            display: block;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            border: 1px solid #444;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        #searchResults a:hover {
+            background-color: #3a3a3a;
+            border-color: #777;
+        }
+        #searchResults .no-results {
+            color: #a0a0a0;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>LCHP NOTES</h1>
         <p>Sebuah tempat yang berisi catatan-catatan buatan member dan admin LC: Healthy Program</p>
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search notes..." oninput="search()">
+            <input type="text" id="searchInput" placeholder="Cari catatan..." oninput="search()">
         </div>
         <div id="searchResults"></div>
     </div>
 
     <script>
+        // Memanggil fungsi search saat halaman pertama kali dimuat untuk menampilkan semua catatan
+        document.addEventListener('DOMContentLoaded', function() {
+            search();
+        });
+
         function search() {
             var searchTerm = document.getElementById("searchInput").value.toLowerCase();
             var apiUrl = "https://api.github.com/repos/lexiiz3417/lexiiz3417.github.io/contents/lchp";
@@ -36,15 +117,20 @@
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
-                    var blacklistedFiles = ["index.html", "lchp.js", "timesince.js", "lchp.css", "lchp.png", "lchpfav.png"]; // Nama file yang ingin di-blacklist
+                    var blacklistedFiles = ["index.html", "lchp.js", "timesince.js", "lchp.css", "lchp.png", "lchpfav.png", "404.html"]; // Nama file yang ingin di-blacklist
                     var searchResults = data.filter(item => 
                         item.name.toLowerCase().includes(searchTerm) && 
                         !blacklistedFiles.includes(item.name) && // Memastikan nama file tidak termasuk dalam daftar blacklistedFiles
-                        item.type === "file" // Memastikan item adalah file, bukan direktori
+                        item.type === "file" && // Memastikan item adalah file
+                        item.name.endsWith('.html') // Memastikan hanya file .html yang ditampilkan
                     );
                     displaySearchResults(searchResults);
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error)
+                    var searchResultsContainer = document.getElementById("searchResults");
+                    searchResultsContainer.innerHTML = '<div class="no-results">Gagal memuat data. Coba lagi nanti.</div>';
+                });
         }
 
         function displaySearchResults(results) {
@@ -55,15 +141,19 @@
                 results.forEach(function(result) {
                     var link = document.createElement("a");
                     var relativeUrl = result.path.replace("lchp/", "");
-                    link.href = "https://" + window.location.hostname + "/lchp/" + relativeUrl;
+                    
+                    // Menggunakan URL lengkap dari repo GitHub Pages
+                    link.href = "https://lexiiz3417.github.io/lchp/" + relativeUrl;
+                    
+                    // Menghilangkan ekstensi .html dari nama file untuk tampilan
                     link.textContent = result.name.replace('.html', '');
+                    
                     searchResultsContainer.appendChild(link);
                 });
             } else {
-                searchResultsContainer.textContent = "Tidak ada hasil yang ditemukan";
+                searchResultsContainer.innerHTML = '<div class="no-results">Tidak ada hasil yang ditemukan</div>';
             }
         }
     </script>
-
 </body>
 </html>
