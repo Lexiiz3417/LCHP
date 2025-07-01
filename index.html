@@ -1,399 +1,177 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Note - LCHP Tools</title>
-    <meta name="description" content="Alat untuk membuat halaman catatan baru dengan tema, format, dan pratinjau langsung.">
+    <title>LCHP NOTES</title>
+    
     <link rel="icon" type="image/png" href="https://lexiiz3417.github.io/lchp/lchpfav.png">
-    <meta property="og:title" content="Create a Note - LCHP Tools">
-    <meta property="og:description" content="Alat untuk membuat halaman catatan baru dengan tema, format, dan pratinjau langsung.">
+    
+    <meta property="og:title" content="LCHP NOTES">
+    <meta property="og:description" content="Sebuah tempat yang berisi catatan-catatan karya member dan admin LC: Healthy Program">
     <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
-    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/tools/create-a-note.html">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <script src="https://lexiiz3417.github.io/lchp/lchp.js"></script>
+
     <style>
-        body { font-family: 'Courier Prime', 'Courier New', Courier, monospace; background-color: #0d0d0d; color: #e0e0e0; line-height: 1.6; margin: 0; padding: 20px; }
-        .main-container { max-width: 1300px; width: 100%; margin: 0 auto; }
-        h1, p.subtitle { text-align: center; }
-        h1 { color: #ffffff; text-transform: uppercase; letter-spacing: 2px; }
-        p.subtitle { color: #a0a0a0; }
-        .editor-layout { display: flex; flex-wrap: wrap; gap: 30px; margin-top: 30px; }
-        .editor-pane, .preview-pane { flex: 1; min-width: 350px; }
-        .editor-pane .container, .preview-pane .container { background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #444; height: 100%; box-sizing: border-box; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #f0f0f0; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #555; border-radius: 4px; box-sizing: border-box; font-size: 16px; font-family: inherit; background-color: #2c2c2c; color: #e0e0e0; }
-        textarea#note-content { min-height: 300px; resize: vertical; }
-        .format-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; padding: 10px; background-color: #2c2c2c; border-radius: 4px; }
-        .format-toolbar button { width: auto; flex-grow: 1; padding: 8px 10px; font-size: 14px; background-color: #383838; border: 1px solid #555; text-transform: none; color: #e0e0e0; cursor: pointer; }
-        .format-toolbar button:hover { background-color: #4a4a4a; }
-        #preview-content { font-family: 'Courier New', Courier, monospace; line-height: 1.7; word-wrap: break-word; }
-        #preview-content h1, #preview-content h2, #preview-content h3 { text-align: left; letter-spacing: 1px; color: #fff; margin-top: 1.5em; margin-bottom: 0.5em; text-transform: uppercase; }
-        #preview-content .author { text-align: left; margin-top: -15px; color: #a0a0a0; font-style: italic; }
-        #preview-content .note-content { margin-top: 20px; }
-        #preview-content p { margin: 0 0 1em 0; }
-        #preview-content ul, #preview-content ol { padding-left: 25px; }
-        #preview-content a { color: #ff4136; }
-        #preview-content .box-warning, #preview-content .box-good, #preview-content .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
-        #preview-content .box-warning p, #preview-content .box-good p, #preview-content .box-caution p { margin: 0; }
-        #preview-content .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
-        #preview-content .box-good { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.05); }
-        #preview-content .box-caution { border-color: #f39c12; background-color: rgba(243, 156, 18, 0.05); }
-        #preview-content table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
-        #preview-content th, #preview-content td { border: 1px solid #555; padding: 10px; text-align: left; }
-        #preview-content th { background-color: #2c2c2c; }
-        #preview-content img, #preview-content iframe, #preview-content video, #preview-content audio { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 1em 0; }
-        #result-area { margin-top: 30px; display: none; background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #444; }
-        #generated-html-code { min-height: 200px; width: 100%; background-color: #0d0d0d; white-space: pre-wrap; word-wrap: break-word; }
-        #copy-html-button { margin-top: 15px; background-color: #ff4136; border-color: #ff4136; color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; padding: 10px 15px; text-transform: uppercase; font-weight: bold; border-radius: 4px; }
-        #copy-html-button:hover { background-color: #fff; color: #ff4136; }
-        .back-button { position: fixed; bottom: 25px; right: 25px; z-index: 1000; }
-        .back-button a { display: flex; align-items: center; text-decoration: none; color: #ffffff; font-size: 22px; }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #1a1a1a;
+            padding: 25px 40px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #a0a0a0;
+        }
+        .search-container {
+            margin-bottom: 30px;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            text-align: center;
+        }
+        #searchInput:focus {
+            border-color: #ffffff;
+            outline: none;
+        }
+        #searchResults {
+            text-align: left;
+        }
+        #searchResults a {
+            display: block;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            border: 1px solid #444;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        #searchResults a:hover {
+            background-color: #3a3a3a;
+            border-color: #777;
+        }
+        #searchResults .no-results {
+            color: #a0a0a0;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
-
-<div class="main-container">
-    <h1>Create a Note</h1>
-    <p class="subtitle">Buat file catatan HTML baru dengan format standar, toolbar, dan pratinjau langsung.</p>
-
-    <div class="editor-layout">
-        <div class="editor-pane">
-            <div class="container">
-                <form id="note-creator-form">
-                    <div class="form-group">
-                        <label for="note-title">Judul Catatan</label>
-                        <input type="text" id="note-title" placeholder="Tulis judul yang menarik..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="note-author">Nama Penulis</label>
-                        <input type="text" id="note-author" placeholder="Nama Anda (opsional)">
-                    </div>
-                    <div class="form-group">
-                        <label for="note-content">Isi Catatan</label>
-                        <div class="format-toolbar">
-                            <button type="button" id="format-h1" title="Heading 1">H1</button>
-                            <button type="button" id="format-h2" title="Heading 2">H2</button>
-                            <button type="button" id="format-h3" title="Heading 3">H3</button>
-                            <button type="button" id="format-p" title="Paragraf"><i class="fas fa-paragraph"></i></button>
-                            <button type="button" id="format-ul" title="Unordered List"><i class="fas fa-list-ul"></i></button>
-                            <button type="button" id="format-ol" title="Ordered List"><i class="fas fa-list-ol"></i></button>
-                            <button type="button" id="format-table" title="Tabel"><i class="fas fa-table"></i></button>
-                            <button type="button" id="format-bold" title="Bold"><i class="fas fa-bold"></i></button>
-                            <button type="button" id="format-italic" title="Italic"><i class="fas fa-italic"></i></button>
-                            <button type="button" id="format-underline" title="Underline"><i class="fas fa-underline"></i></button>
-                            <button type="button" id="format-link" title="Link"><i class="fas fa-link"></i></button>
-                            <button type="button" id="format-media" title="Sematkan Media"><i class="fas fa-photo-video"></i></button>
-                            <button type="button" id="format-good" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
-                            <button type="button" id="format-caution" title="Hati-hati (Kuning)"><i class="fas fa-exclamation-circle"></i></button>
-                            <button type="button" id="format-warning" title="Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i></button>
-                        </div>
-                        <textarea id="note-content" placeholder="Tulis atau seleksi teks lalu gunakan toolbar di atas..." required></textarea>
-                    </div>
-                    <button type="submit">
-                        <i class="fas fa-cogs"></i> Generate HTML Code
-                    </button>
-                </form>
-            </div>
+    <div class="container">
+        <h1>LCHP NOTES</h1>
+        <p>Sebuah tempat yang berisi catatan-catatan buatan member dan admin LC: Healthy Program</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Cari catatan..." oninput="search()">
         </div>
-
-        <div class="preview-pane">
-            <div class="container">
-                <h3><i class="fas fa-eye"></i> Live Preview</h3>
-                <div id="preview-content"></div>
-            </div>
-        </div>
+        <div id="searchResults"></div>
     </div>
 
-    <div id="result-area">
-        <h3><i class="fas fa-check-circle" style="color: #2ecc71;"></i> Kode HTML Siap!</h3>
-        <p class="subtitle">Salin kode di bawah ini dan simpan sebagai file .html</p>
-        <textarea id="generated-html-code" readonly></textarea>
-        <button id="copy-html-button">
-            <i class="fas fa-copy"></i>
-            <span class="button-text">Salin Kode</span>
-        </button>
-    </div>
-</div>
-
-<div class="floating-icon back-button">
-    <a href="https://lexiiz3417.github.io/lchp" target="_blank" title="Kembali ke LCHP Notes">
-        <i class="fas fa-chevron-circle-left"></i>
-    </a>
-</div>
-
-<script>
-    // --- Elemen Global ---
-    const noteTitle = document.getElementById('note-title');
-    const noteAuthor = document.getElementById('note-author');
-    const noteContent = document.getElementById('note-content');
-    const previewContent = document.getElementById('preview-content');
-    const noteForm = document.getElementById('note-creator-form');
-
-    // --- FUNGSI LIVE PREVIEW ---
-    function updatePreview() {
-        const title = noteTitle.value || "Judul Catatan...";
-        const author = noteAuthor.value;
-        const contentHtml = noteContent.value;
-
-        previewContent.innerHTML = `
-            <h1>${title}</h1>
-            ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
-            <hr style="border-color: #444; margin: 20px 0;">
-            <div class="note-content">${contentHtml}</div>
-        `;
-    }
-    
-    // --- FIX: Logika Enter key diperbaiki untuk stabilitas ---
-    noteContent.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) { // Shift+Enter akan tetap membuat baris baru biasa
-            e.preventDefault();
-            
-            const cursorPosition = noteContent.selectionStart;
-            const textBefore = noteContent.value.substring(0, cursorPosition);
-            const textAfter  = noteContent.value.substring(noteContent.selectionEnd);
-
-            noteContent.value = textBefore + "<br>" + textAfter;
-            
-            // Pindahkan kursor setelah tag <br>
-            const newCursorPosition = cursorPosition + 4;
-            noteContent.selectionStart = newCursorPosition;
-            noteContent.selectionEnd = newCursorPosition;
-            
-            // Perbarui pratinjau
-            updatePreview();
-        }
-    });
-
-    [noteTitle, noteAuthor, noteContent].forEach(el => el.addEventListener('input', updatePreview));
-    document.addEventListener('DOMContentLoaded', updatePreview);
-
-    // --- FUNGSI TOOLBAR ---
-    function getSelection() {
-        return {
-            start: noteContent.selectionStart,
-            end: noteContent.selectionEnd,
-            text: noteContent.value.substring(noteContent.selectionStart, noteContent.selectionEnd)
-        };
-    }
-
-    function applyFormat(replacement) {
-        noteContent.focus();
-        document.execCommand('insertText', false, replacement);
-        updatePreview();
-    }
-
-    // --- Event Listener untuk Toolbar ---
-    document.getElementById('format-bold').addEventListener('click', () => wrapText('b'));
-    document.getElementById('format-italic').addEventListener('click', () => wrapText('i'));
-    document.getElementById('format-underline').addEventListener('click', () => wrapText('u'));
-    document.getElementById('format-p').addEventListener('click', () => wrapText('p', true));
-    document.getElementById('format-link').addEventListener('click', () => handleLink());
-    document.getElementById('format-h1').addEventListener('click', () => wrapText('h1', true));
-    document.getElementById('format-h2').addEventListener('click', () => wrapText('h2', true));
-    document.getElementById('format-h3').addEventListener('click', () => wrapText('h3', true));
-    document.getElementById('format-ul').addEventListener('click', () => formatList('ul'));
-    document.getElementById('format-ol').addEventListener('click', () => formatList('ol'));
-    document.getElementById('format-table').addEventListener('click', () => insertTable());
-    document.getElementById('format-good').addEventListener('click', () => wrapInBox('box-good'));
-    document.getElementById('format-caution').addEventListener('click', () => wrapInBox('box-caution'));
-    document.getElementById('format-warning').addEventListener('click', () => wrapInBox('box-warning'));
-    document.getElementById('format-media').addEventListener('click', () => handleMediaEmbed());
-
-    function wrapText(tag, isBlock = false) {
-        const selection = getSelection();
-        if (selection.text.length === 0) {
-            alert("Seleksi teks yang ingin diformat!");
-            noteContent.focus(); // FIX: Mengembalikan fokus ke editor
-            return;
-        }
-        let prefix = isBlock && selection.start > 0 && noteContent.value[selection.start - 1] !== '\n' ? '\n' : '';
-        let suffix = isBlock && selection.end < noteContent.value.length && noteContent.value[selection.end] !== '\n' ? '\n' : '';
-        const replacement = `${prefix}<${tag}>${selection.text}</${tag}>${suffix}`;
-        applyFormat(replacement);
-    }
-    
-    function wrapInBox(className) {
-        const selection = getSelection();
-        if (selection.text.length === 0) {
-            alert("Seleksi teks yang ingin dimasukkan ke dalam kotak info!");
-            noteContent.focus(); // FIX: Mengembalikan fokus ke editor
-            return;
-        }
-        const content = selection.text.split('\n').map(line => `<p>${line}</p>`).join('');
-        const replacement = `\n<div class="${className}">${content}</div>\n`;
-        applyFormat(replacement);
-    }
-    
-    function handleLink() {
-        const selection = getSelection();
-        const url = prompt("Masukkan URL untuk link:", "https://");
-        if (!url) {
-            noteContent.focus();
-            return;
-        };
-        const text = selection.text || 'teks link';
-        const replacement = `<a href="${url}" target="_blank">${text}</a>`;
-        applyFormat(replacement);
-    }
-
-    function formatList(tag) {
-        const selection = getSelection();
-        if (selection.text.length === 0) {
-            alert("Seleksi beberapa baris teks untuk dijadikan list!");
-            noteContent.focus(); // FIX: Mengembalikan fokus ke editor
-            return;
-        }
-        const items = selection.text.split('\n').map(item => `\t<li>${item.trim()}</li>`).join('\n');
-        const replacement = `\n<${tag}>\n${items}\n</${tag}>\n`;
-        applyFormat(replacement);
-    }
-    
-    function handleMediaEmbed() {
-        const url = prompt("Masukkan URL media (Gambar, GIF, Video, Audio, YouTube, dll):");
-        if (!url) {
-            noteContent.focus();
-            return;
-        }
-
-        let replacement = '';
-        const youtubeMatch = url.match(/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/);
-        if (youtubeMatch) {
-            const videoId = youtubeMatch[1];
-            replacement = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-        }
-        else if (/\.(jpeg|jpg|gif|png|webp|svg)$/i.test(url)) {
-            replacement = `<img src="${url}" alt="Gambar yang disematkan">`;
-        }
-        else if (/\.(mp4|webm|ogv)$/i.test(url)) {
-            replacement = `<video controls src="${url}">Browser Anda tidak mendukung tag video.</video>`;
-        }
-        else if (/\.(mp3|ogg|wav)$/i.test(url)) {
-            replacement = `<audio controls src="${url}">Browser Anda tidak mendukung tag audio.</audio>`;
-        }
-        else {
-            replacement = `<iframe src="${url}" width="100%" height="350" frameborder="0" allowfullscreen></iframe>`;
-            alert("Tautan tidak dikenal sebagai file media langsung. Mencoba menyematkan dengan <iframe>.\nPastikan tautan adalah URL 'embed' atau 'share' yang valid.");
-            noteContent.focus();
-        }
-
-        if (replacement) {
-            applyFormat(`\n${replacement}\n`);
-        }
-    }
-
-    function insertTable() {
-        const tableTemplate = `\n<table>
-    <thead>
-        <tr>
-            <th>Header 1</th>
-            <th>Header 2</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Data 1</td>
-            <td>Data 2</td>
-        </tr>
-    </tbody>
-</table>\n`;
-        applyFormat(tableTemplate);
-    }
-
-    // --- FUNGSI GENERATE & COPY ---
-    noteForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const title = noteTitle.value;
-        const author = noteAuthor.value;
-        const contentHtml = noteContent.value;
-        const description = noteContent.value.replace(/<[^>]*>/g, '').substring(0, 155).replace(/\n/g, ' ') + '...';
-        const fileName = (title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') || 'catatan-baru') + '.html';
-
-        const generatedHtml = `<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} - LCHP Notes</title>
-    <meta name="description" content="${description}">
-    <link rel="icon" type="image/png" href="https://lexiiz3417.github.io/lchp/lchpfav.png">
-    <meta property="og:title" content="${title} - LCHP Notes">
-    <meta property="og:description" content="${description}">
-    <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
-    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/notes/${fileName}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        body { font-family: 'Courier New', Courier, monospace; background-color: #0d0d0d; color: #e0e0e0; line-height: 1.7; margin: 0; padding: 20px; }
-        .container { background-color: #1a1a1a; padding: 25px 40px; border-radius: 8px; border: 1px solid #444; max-width: 700px; width: 100%; margin: 20px auto; }
-        h1, h2, h3 { text-align: left; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
-        .author { text-align: left; margin-top: -15px; color: #a0a0a0; font-style: italic; }
-        .note-content { word-wrap: break-word; } .note-content p { margin-bottom: 1.2em; }
-        a { color: #ff4136; text-decoration: none; } a:hover { text-decoration: underline; }
-        ul, ol { padding-left: 25px; }
-        img, iframe, video, audio { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 1em 0; background-color: #000; }
-        .box-warning, .box-good, .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
-        .box-warning p, .box-good p, .box-caution p { margin: 0; }
-        .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
-        .box-good { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.05); }
-        .box-caution { border-color: #f39c12; background-color: rgba(243, 156, 18, 0.05); }
-        table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
-        table th, table td { border: 1px solid #555; padding: 10px; text-align: left; }
-        table th { background-color: #2c2c2c; }
-        .back-button { position: fixed; bottom: 25px; right: 25px; z-index: 1000; }
-        .back-button a { display: flex; align-items: center; text-decoration: none; font-size: 22px; color: #fff; }
-        footer { margin-top: 40px; color: #888; font-size: 14px; text-align: center; }
-    </style>
-</head>
-<body>
-<div class="floating-icon back-button">
-    <a href="https://lexiiz3417.github.io/lchp/" target="_blank" title="Kembali ke LCHP Notes">
-        <i class="fas fa-chevron-circle-left"></i>
-    </a>
-</div>
-<div class="container">
-    <h1>${title}</h1>
-    ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
-    <hr style="border-color: #444; margin: 30px 0;">
-    <div class="note-content">
-${contentHtml}
-    </div>
-</div>
-<footer>
-    oleh Lexiiz3417
-</footer>
-</body>
-</html>`;
-        document.getElementById('generated-html-code').value = generatedHtml;
-        document.getElementById('result-area').style.display = 'block';
-        window.scrollTo(0, document.body.scrollHeight);
-    });
-
-    document.getElementById('copy-html-button').addEventListener('click', function() {
-        const codeToCopy = document.getElementById('generated-html-code');
-        const icon = this.querySelector('i');
-        const text = this.querySelector('.button-text');
-        if (!codeToCopy.value) return;
-        navigator.clipboard.writeText(codeToCopy.value).then(() => {
-            icon.className = 'fas fa-check';
-            text.textContent = 'Tersalin!';
-            setTimeout(() => {
-                icon.className = 'fas fa-copy';
-                text.textContent = 'Salin Kode';
-            }, 2000);
-        }).catch(() => {
-            try {
-                codeToCopy.select();
-                document.execCommand('copy');
-                icon.className = 'fas fa-check';
-                text.textContent = 'Tersalin!';
-            } catch (e) {
-                text.textContent = 'Gagal';
-            }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            search();
         });
-    });
-</script>
+
+        function search() {
+            const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+            const foldersToSearch = ['notes', 'tools']; 
+            
+            const apiPromises = foldersToSearch.map(folder => {
+                const apiUrl = `https://api.github.com/repos/lexiiz3417/lchp/contents/${folder}`;
+                return fetch(apiUrl).then(response => {
+                    if (!response.ok) {
+                        console.warn(`Tidak dapat mengambil data dari folder: ${folder}`);
+                        return [];
+                    }
+                    return response.json();
+                });
+            });
+
+            Promise.all(apiPromises)
+                .then(resultsArray => {
+                    const allFiles = resultsArray.flat(); 
+                    const blacklistedFiles = ["index.html", "lchp.js", "timesince.js", "lchp.css", "lchp.png", "lchpfav.png", "404.html"];
+                    
+                    const searchResults = allFiles.filter(item => 
+                        item.name.toLowerCase().includes(searchTerm) && 
+                        !blacklistedFiles.includes(item.name) &&
+                        item.type === "file" &&
+                        item.name.endsWith('.html')
+                    );
+                    
+                    displaySearchResults(searchResults);
+                })
+                .catch(error => {
+                    console.error('Error fetching repository contents:', error);
+                    const searchResultsContainer = document.getElementById("searchResults");
+                    searchResultsContainer.innerHTML = '<div class="no-results">Gagal memuat data. Coba lagi nanti.</div>';
+                });
+        }
+
+        function displaySearchResults(results) {
+            const searchResultsContainer = document.getElementById("searchResults");
+            searchResultsContainer.innerHTML = "";
+
+            if (results.length > 0) {
+                results.sort((a, b) => a.name.localeCompare(b.name));
+
+                results.forEach(function(result) {
+                    const link = document.createElement("a");
+                    link.href = "https://lexiiz3417.github.io/lchp/" + result.path;
+                    
+                    const pathParts = result.path.split('/');
+                    const fileName = result.name.replace('.html', '');
+
+                    if (pathParts.length > 1) {
+                        const directory = pathParts[0];
+                        link.textContent = `${directory} / ${fileName}`; 
+                    } else {
+                        link.textContent = fileName;
+                    }
+                    
+                    searchResultsContainer.appendChild(link);
+                });
+            } else {
+                searchResultsContainer.innerHTML = '<div class="no-results">Tidak ada hasil yang ditemukan</div>';
+            }
+        }
+    </script>
 </body>
 </html>
