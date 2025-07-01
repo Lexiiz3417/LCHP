@@ -82,11 +82,12 @@
                             <button type="button" id="format-ul" title="Unordered List"><i class="fas fa-list-ul"></i></button>
                             <button type="button" id="format-ol" title="Ordered List"><i class="fas fa-list-ol"></i></button>
                             <button type="button" id="format-table" title="Tabel"><i class="fas fa-table"></i></button>
-                             <button type="button" id="format-bold" title="Bold"><i class="fas fa-bold"></i></button>
+                            <button type="button" id="format-bold" title="Bold"><i class="fas fa-bold"></i></button>
                             <button type="button" id="format-italic" title="Italic"><i class="fas fa-italic"></i></button>
                             <button type="button" id="format-underline" title="Underline"><i class="fas fa-underline"></i></button>
                             <button type="button" id="format-link" title="Link"><i class="fas fa-link"></i></button>
-                            <button type="button" id="format-media" title="Sematkan Media"><i class="fas fa-photo-video"></i></button> <button type="button" id="format-good" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
+                            <button type="button" id="format-media" title="Sematkan Media"><i class="fas fa-photo-video"></i></button>
+                            <button type="button" id="format-good" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
                             <button type="button" id="format-caution" title="Hati-hati (Kuning)"><i class="fas fa-exclamation-circle"></i></button>
                             <button type="button" id="format-warning" title="Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i></button>
                         </div>
@@ -146,10 +147,24 @@
         `;
     }
     
+    // --- FIX: Logika Enter key diperbaiki untuk stabilitas ---
     noteContent.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !e.shiftKey) { // Shift+Enter akan tetap membuat baris baru biasa
             e.preventDefault();
-            document.execCommand('insertHTML', false, '<br>');
+            
+            const cursorPosition = noteContent.selectionStart;
+            const textBefore = noteContent.value.substring(0, cursorPosition);
+            const textAfter  = noteContent.value.substring(noteContent.selectionEnd);
+
+            noteContent.value = textBefore + "<br>" + textAfter;
+            
+            // Pindahkan kursor setelah tag <br>
+            const newCursorPosition = cursorPosition + 4;
+            noteContent.selectionStart = newCursorPosition;
+            noteContent.selectionEnd = newCursorPosition;
+            
+            // Perbarui pratinjau
+            updatePreview();
         }
     });
 
@@ -167,9 +182,8 @@
 
     function applyFormat(replacement) {
         noteContent.focus();
-        if (document.execCommand('insertText', false, replacement)) {
-             updatePreview();
-        }
+        document.execCommand('insertText', false, replacement);
+        updatePreview();
     }
 
     // --- Event Listener untuk Toolbar ---
@@ -187,12 +201,13 @@
     document.getElementById('format-good').addEventListener('click', () => wrapInBox('box-good'));
     document.getElementById('format-caution').addEventListener('click', () => wrapInBox('box-caution'));
     document.getElementById('format-warning').addEventListener('click', () => wrapInBox('box-warning'));
-    document.getElementById('format-media').addEventListener('click', () => handleMediaEmbed()); // EVENT LISTENER BARU
+    document.getElementById('format-media').addEventListener('click', () => handleMediaEmbed());
 
     function wrapText(tag, isBlock = false) {
         const selection = getSelection();
         if (selection.text.length === 0) {
             alert("Seleksi teks yang ingin diformat!");
+            noteContent.focus(); // FIX: Mengembalikan fokus ke editor
             return;
         }
         let prefix = isBlock && selection.start > 0 && noteContent.value[selection.start - 1] !== '\n' ? '\n' : '';
@@ -205,6 +220,7 @@
         const selection = getSelection();
         if (selection.text.length === 0) {
             alert("Seleksi teks yang ingin dimasukkan ke dalam kotak info!");
+            noteContent.focus(); // FIX: Mengembalikan fokus ke editor
             return;
         }
         const content = selection.text.split('\n').map(line => `<p>${line}</p>`).join('');
@@ -215,7 +231,10 @@
     function handleLink() {
         const selection = getSelection();
         const url = prompt("Masukkan URL untuk link:", "https://");
-        if (!url) return;
+        if (!url) {
+            noteContent.focus();
+            return;
+        };
         const text = selection.text || 'teks link';
         const replacement = `<a href="${url}" target="_blank">${text}</a>`;
         applyFormat(replacement);
@@ -225,6 +244,7 @@
         const selection = getSelection();
         if (selection.text.length === 0) {
             alert("Seleksi beberapa baris teks untuk dijadikan list!");
+            noteContent.focus(); // FIX: Mengembalikan fokus ke editor
             return;
         }
         const items = selection.text.split('\n').map(item => `\t<li>${item.trim()}</li>`).join('\n');
@@ -232,35 +252,32 @@
         applyFormat(replacement);
     }
     
-    // --- FUNGSI SEMATAN MEDIA OTOMATIS (BARU) ---
     function handleMediaEmbed() {
         const url = prompt("Masukkan URL media (Gambar, GIF, Video, Audio, YouTube, dll):");
-        if (!url) return;
+        if (!url) {
+            noteContent.focus();
+            return;
+        }
 
         let replacement = '';
-
-        // Deteksi YouTube
         const youtubeMatch = url.match(/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/);
         if (youtubeMatch) {
             const videoId = youtubeMatch[1];
             replacement = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         }
-        // Deteksi file gambar
         else if (/\.(jpeg|jpg|gif|png|webp|svg)$/i.test(url)) {
             replacement = `<img src="${url}" alt="Gambar yang disematkan">`;
         }
-        // Deteksi file video
         else if (/\.(mp4|webm|ogv)$/i.test(url)) {
             replacement = `<video controls src="${url}">Browser Anda tidak mendukung tag video.</video>`;
         }
-        // Deteksi file audio
         else if (/\.(mp3|ogg|wav)$/i.test(url)) {
             replacement = `<audio controls src="${url}">Browser Anda tidak mendukung tag audio.</audio>`;
         }
-        // Fallback untuk URL lain (misal: Vimeo, Dailymotion, dll)
         else {
             replacement = `<iframe src="${url}" width="100%" height="350" frameborder="0" allowfullscreen></iframe>`;
             alert("Tautan tidak dikenal sebagai file media langsung. Mencoba menyematkan dengan <iframe>.\nPastikan tautan adalah URL 'embed' atau 'share' yang valid.");
+            noteContent.focus();
         }
 
         if (replacement) {
