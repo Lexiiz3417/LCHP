@@ -45,7 +45,7 @@
         #preview-content table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
         #preview-content th, #preview-content td { border: 1px solid #555; padding: 10px; text-align: left; }
         #preview-content th { background-color: #2c2c2c; }
-        #preview-content img, #preview-content iframe { max-width: 100%; height: auto; border-radius: 4px; }
+        #preview-content img, #preview-content iframe, #preview-content video, #preview-content audio { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 1em 0; }
         #result-area { margin-top: 30px; display: none; background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #444; }
         #generated-html-code { min-height: 200px; width: 100%; background-color: #0d0d0d; white-space: pre-wrap; word-wrap: break-word; }
         #copy-html-button { margin-top: 15px; background-color: #ff4136; border-color: #ff4136; color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; padding: 10px 15px; text-transform: uppercase; font-weight: bold; border-radius: 4px; }
@@ -86,9 +86,7 @@
                             <button type="button" id="format-italic" title="Italic"><i class="fas fa-italic"></i></button>
                             <button type="button" id="format-underline" title="Underline"><i class="fas fa-underline"></i></button>
                             <button type="button" id="format-link" title="Link"><i class="fas fa-link"></i></button>
-                            <button type="button" id="format-image" title="Sematkan Gambar"><i class="fas fa-image"></i></button>
-                            <button type="button" id="format-video" title="Sematkan Video"><i class="fas fa-video"></i></button>
-                            <button type="button" id="format-good" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
+                            <button type="button" id="format-media" title="Sematkan Media"><i class="fas fa-photo-video"></i></button> <button type="button" id="format-good" title="Saran (Hijau)"><i class="fas fa-check-circle"></i></button>
                             <button type="button" id="format-caution" title="Hati-hati (Kuning)"><i class="fas fa-exclamation-circle"></i></button>
                             <button type="button" id="format-warning" title="Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i></button>
                         </div>
@@ -134,11 +132,11 @@
     const previewContent = document.getElementById('preview-content');
     const noteForm = document.getElementById('note-creator-form');
 
-    // --- FUNGSI LIVE PREVIEW (DIPERBAIKI & DISIMPLIFY) ---
+    // --- FUNGSI LIVE PREVIEW ---
     function updatePreview() {
         const title = noteTitle.value || "Judul Catatan...";
         const author = noteAuthor.value;
-        const contentHtml = noteContent.value; // Langsung ambil nilai karena sudah mengandung HTML
+        const contentHtml = noteContent.value;
 
         previewContent.innerHTML = `
             <h1>${title}</h1>
@@ -148,18 +146,13 @@
         `;
     }
     
-    // --- Event Listener untuk Enter -> <br> ---
     noteContent.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
-            // Hentikan perilaku default (membuat baris baru)
             e.preventDefault();
-            // Sisipkan tag <br> di posisi kursor
             document.execCommand('insertHTML', false, '<br>');
         }
     });
 
-
-    // --- Event Listener untuk Live Update ---
     [noteTitle, noteAuthor, noteContent].forEach(el => el.addEventListener('input', updatePreview));
     document.addEventListener('DOMContentLoaded', updatePreview);
 
@@ -174,7 +167,6 @@
 
     function applyFormat(replacement) {
         noteContent.focus();
-        // Menggunakan insertText lebih aman dan didukung luas
         if (document.execCommand('insertText', false, replacement)) {
              updatePreview();
         }
@@ -190,13 +182,12 @@
     document.getElementById('format-h2').addEventListener('click', () => wrapText('h2', true));
     document.getElementById('format-h3').addEventListener('click', () => wrapText('h3', true));
     document.getElementById('format-ul').addEventListener('click', () => formatList('ul'));
-    document.getElementById('format-ol').addEventListener('click', () => formatList('ol')); // BARU
+    document.getElementById('format-ol').addEventListener('click', () => formatList('ol'));
     document.getElementById('format-table').addEventListener('click', () => insertTable());
     document.getElementById('format-good').addEventListener('click', () => wrapInBox('box-good'));
     document.getElementById('format-caution').addEventListener('click', () => wrapInBox('box-caution'));
     document.getElementById('format-warning').addEventListener('click', () => wrapInBox('box-warning'));
-    document.getElementById('format-image').addEventListener('click', () => insertMedia('image')); // BARU
-    document.getElementById('format-video').addEventListener('click', () => insertMedia('video')); // BARU
+    document.getElementById('format-media').addEventListener('click', () => handleMediaEmbed()); // EVENT LISTENER BARU
 
     function wrapText(tag, isBlock = false) {
         const selection = getSelection();
@@ -216,9 +207,8 @@
             alert("Seleksi teks yang ingin dimasukkan ke dalam kotak info!");
             return;
         }
-        // Ganti baris baru di dalam seleksi dengan paragraf terpisah agar formatnya bagus
         const content = selection.text.split('\n').map(line => `<p>${line}</p>`).join('');
-        const replacement = `<div class="${className}">${content}</div>`;
+        const replacement = `\n<div class="${className}">${content}</div>\n`;
         applyFormat(replacement);
     }
     
@@ -238,26 +228,48 @@
             return;
         }
         const items = selection.text.split('\n').map(item => `\t<li>${item.trim()}</li>`).join('\n');
-        const replacement = `<${tag}>\n${items}\n</${tag}>\n`;
+        const replacement = `\n<${tag}>\n${items}\n</${tag}>\n`;
         applyFormat(replacement);
     }
     
-    function insertMedia(type) {
-        let url, replacement;
-        if (type === 'image') {
-            url = prompt("Masukkan URL gambar:", "https://");
-            if(url) replacement = `<img src="${url}" alt="Gambar">`;
-        } else if (type === 'video') {
-            url = prompt("Masukkan URL SEMATAN (EMBED) video (misal dari YouTube):", "https://www.youtube.com/embed/...");
-            if(url) replacement = `<iframe width="560" height="315" src="${url}" frameborder="0" allowfullscreen></iframe>`;
+    // --- FUNGSI SEMATAN MEDIA OTOMATIS (BARU) ---
+    function handleMediaEmbed() {
+        const url = prompt("Masukkan URL media (Gambar, GIF, Video, Audio, YouTube, dll):");
+        if (!url) return;
+
+        let replacement = '';
+
+        // Deteksi YouTube
+        const youtubeMatch = url.match(/^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/);
+        if (youtubeMatch) {
+            const videoId = youtubeMatch[1];
+            replacement = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         }
+        // Deteksi file gambar
+        else if (/\.(jpeg|jpg|gif|png|webp|svg)$/i.test(url)) {
+            replacement = `<img src="${url}" alt="Gambar yang disematkan">`;
+        }
+        // Deteksi file video
+        else if (/\.(mp4|webm|ogv)$/i.test(url)) {
+            replacement = `<video controls src="${url}">Browser Anda tidak mendukung tag video.</video>`;
+        }
+        // Deteksi file audio
+        else if (/\.(mp3|ogg|wav)$/i.test(url)) {
+            replacement = `<audio controls src="${url}">Browser Anda tidak mendukung tag audio.</audio>`;
+        }
+        // Fallback untuk URL lain (misal: Vimeo, Dailymotion, dll)
+        else {
+            replacement = `<iframe src="${url}" width="100%" height="350" frameborder="0" allowfullscreen></iframe>`;
+            alert("Tautan tidak dikenal sebagai file media langsung. Mencoba menyematkan dengan <iframe>.\nPastikan tautan adalah URL 'embed' atau 'share' yang valid.");
+        }
+
         if (replacement) {
-            applyFormat(replacement);
+            applyFormat(`\n${replacement}\n`);
         }
     }
 
     function insertTable() {
-        const tableTemplate = `<table>
+        const tableTemplate = `\n<table>
     <thead>
         <tr>
             <th>Header 1</th>
@@ -270,7 +282,7 @@
             <td>Data 2</td>
         </tr>
     </tbody>
-</table>`;
+</table>\n`;
         applyFormat(tableTemplate);
     }
 
@@ -279,7 +291,7 @@
         event.preventDefault();
         const title = noteTitle.value;
         const author = noteAuthor.value;
-        const contentHtml = noteContent.value; // Langsung pakai, karena sudah ada <br>
+        const contentHtml = noteContent.value;
         const description = noteContent.value.replace(/<[^>]*>/g, '').substring(0, 155).replace(/\n/g, ' ') + '...';
         const fileName = (title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') || 'catatan-baru') + '.html';
 
@@ -304,7 +316,7 @@
         .note-content { word-wrap: break-word; } .note-content p { margin-bottom: 1.2em; }
         a { color: #ff4136; text-decoration: none; } a:hover { text-decoration: underline; }
         ul, ol { padding-left: 25px; }
-        img, iframe { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 1em 0; }
+        img, iframe, video, audio { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 1em 0; background-color: #000; }
         .box-warning, .box-good, .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
         .box-warning p, .box-good p, .box-caution p { margin: 0; }
         .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
@@ -339,16 +351,14 @@ ${contentHtml}
 </html>`;
         document.getElementById('generated-html-code').value = generatedHtml;
         document.getElementById('result-area').style.display = 'block';
-        window.scrollTo(0, document.body.scrollHeight); // Auto-scroll ke bawah
+        window.scrollTo(0, document.body.scrollHeight);
     });
 
     document.getElementById('copy-html-button').addEventListener('click', function() {
         const codeToCopy = document.getElementById('generated-html-code');
         const icon = this.querySelector('i');
         const text = this.querySelector('.button-text');
-
         if (!codeToCopy.value) return;
-
         navigator.clipboard.writeText(codeToCopy.value).then(() => {
             icon.className = 'fas fa-check';
             text.textContent = 'Tersalin!';
