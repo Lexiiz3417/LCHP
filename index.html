@@ -105,23 +105,18 @@
     </div>
 
     <script>
-        // Memanggil fungsi search saat halaman pertama kali dimuat untuk menampilkan semua catatan
         document.addEventListener('DOMContentLoaded', function() {
             search();
         });
 
         function search() {
             const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-            
-            // Tentukan semua folder yang ingin Anda cari
             const foldersToSearch = ['notes', 'tools']; 
             
-            // Buat daftar pemanggilan API untuk setiap folder
             const apiPromises = foldersToSearch.map(folder => {
                 const apiUrl = `https://api.github.com/repos/lexiiz3417/lchp/contents/${folder}`;
                 return fetch(apiUrl).then(response => {
                     if (!response.ok) {
-                        // Jika folder tidak ada atau ada error, kembalikan array kosong agar tidak menghentikan proses
                         console.warn(`Tidak dapat mengambil data dari folder: ${folder}`);
                         return [];
                     }
@@ -129,17 +124,11 @@
                 });
             });
 
-            // Jalankan semua pemanggilan API secara bersamaan
             Promise.all(apiPromises)
                 .then(resultsArray => {
-                    // resultsArray adalah array yang berisi hasil dari setiap folder, contoh: [[...files dari notes], [...files dari tools]]
-                    
-                    // Gabungkan semua hasil menjadi satu array tunggal
                     const allFiles = resultsArray.flat(); 
-
                     const blacklistedFiles = ["index.html", "lchp.js", "timesince.js", "lchp.css", "lchp.png", "lchpfav.png", "404.html"];
                     
-                    // Lakukan filter pada array yang sudah digabung
                     const searchResults = allFiles.filter(item => 
                         item.name.toLowerCase().includes(searchTerm) && 
                         !blacklistedFiles.includes(item.name) &&
@@ -150,7 +139,6 @@
                     displaySearchResults(searchResults);
                 })
                 .catch(error => {
-                    // Tangani jika ada error jaringan yang fatal
                     console.error('Error fetching repository contents:', error);
                     const searchResultsContainer = document.getElementById("searchResults");
                     searchResultsContainer.innerHTML = '<div class="no-results">Gagal memuat data. Coba lagi nanti.</div>';
@@ -162,17 +150,21 @@
             searchResultsContainer.innerHTML = "";
 
             if (results.length > 0) {
-                // Urutkan hasil berdasarkan nama file secara alfabetis
                 results.sort((a, b) => a.name.localeCompare(b.name));
 
                 results.forEach(function(result) {
                     const link = document.createElement("a");
-                    
-                    // Gunakan result.path yang sudah berisi path lengkap dari root repo (e.g., "notes/namafile.html")
                     link.href = "https://lexiiz3417.github.io/lchp/" + result.path;
                     
-                    // Menghilangkan ekstensi .html dari nama file untuk tampilan
-                    link.textContent = result.name.replace('.html', '');
+                    const pathParts = result.path.split('/');
+                    const fileName = result.name.replace('.html', '');
+
+                    if (pathParts.length > 1) {
+                        const directory = pathParts[0];
+                        link.textContent = `${directory} / ${fileName}`; 
+                    } else {
+                        link.textContent = fileName;
+                    }
                     
                     searchResultsContainer.appendChild(link);
                 });
