@@ -22,21 +22,21 @@
         p.subtitle { color: #a0a0a0; }
         .editor-layout { display: flex; flex-wrap: wrap; gap: 30px; margin-top: 30px; }
         .editor-pane, .preview-pane { flex: 1; min-width: 350px; }
-        .editor-pane .container, .preview-pane .container { background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #444; height: 100%; }
+        .editor-pane .container, .preview-pane .container { background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #444; height: 100%; box-sizing: border-box; }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #f0f0f0; }
         input, textarea { width: 100%; padding: 12px; border: 1px solid #555; border-radius: 4px; box-sizing: border-box; font-size: 16px; font-family: inherit; background-color: #2c2c2c; color: #e0e0e0; }
         textarea#note-content { min-height: 300px; resize: vertical; }
         .format-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; padding: 10px; background-color: #2c2c2c; border-radius: 4px; }
-        .format-toolbar button { width: auto; flex-grow: 1; padding: 8px 10px; font-size: 14px; background-color: #383838; border: 1px solid #555; text-transform: none; }
+        .format-toolbar button { width: auto; flex-grow: 1; padding: 8px 10px; font-size: 14px; background-color: #383838; border: 1px solid #555; text-transform: none; color: #e0e0e0; cursor: pointer; }
         .format-toolbar button:hover { background-color: #4a4a4a; }
-        #preview-content { font-family: 'Courier New', Courier, monospace; line-height: 1.7; }
-        #preview-content h1, #preview-content h2, #preview-content h3 { text-align: left; letter-spacing: 1px; color: #fff; }
+        #preview-content { font-family: 'Courier New', Courier, monospace; line-height: 1.7; word-wrap: break-word; }
+        #preview-content h1, #preview-content h2, #preview-content h3 { text-align: left; letter-spacing: 1px; color: #fff; margin-top: 1.5em; margin-bottom: 0.5em; }
         #preview-content .author { text-align: left; margin-top: -15px; color: #a0a0a0; font-style: italic; }
-        #preview-content .note-content p { margin-bottom: 1.2em; }
+        #preview-content .note-content { margin-top: 20px; }
         #preview-content ul, #preview-content ol { padding-left: 25px; }
-        #preview-content a { color: #ff4136; }
-        #preview-content .box-warning, #preview-content .box-good, #preview-content .box-caution { margin: 1.5em 0; padding: 1px 20px; border-radius: 6px; border-left: 5px solid; }
+        #preview-content a { color: #ff4136; text-decoration: none; } #preview-content a:hover { text-decoration: underline; }
+        #preview-content .box-warning, #preview-content .box-good, #preview-content .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
         #preview-content .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
         #preview-content .box-good { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.05); }
         #preview-content .box-caution { border-color: #f39c12; background-color: rgba(243, 156, 18, 0.05); }
@@ -45,7 +45,7 @@
         #preview-content th { background-color: #2c2c2c; }
         #result-area { margin-top: 30px; display: none; background-color: #1a1a1a; padding: 25px; border-radius: 8px; border: 1px solid #444; }
         #generated-html-code { min-height: 200px; width: 100%; background-color: #0d0d0d; white-space: pre; word-wrap: break-word; }
-        #copy-html-button { margin-top: 15px; background-color: #ff4136; border-color: #ff4136; display: inline-flex; align-items: center; justify-content: center; gap: 10px; }
+        #copy-html-button { margin-top: 15px; background-color: #ff4136; border-color: #ff4136; color: #fff; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; padding: 10px 15px; text-transform: uppercase; font-weight: bold; border-radius: 4px; }
         #copy-html-button:hover { background-color: #fff; color: #ff4136; }
         .back-button { position: fixed; bottom: 25px; right: 25px; z-index: 1000; }
         .back-button a { display: flex; align-items: center; text-decoration: none; color: #ffffff; font-size: 22px; }
@@ -60,7 +60,7 @@
     <div class="editor-layout">
         <div class="editor-pane">
             <div class="container">
-                <form id="note-creator-form" onsubmit="generateAndCopy(event)">
+                <form id="note-creator-form" onsubmit="generateHtml(event)">
                     <div class="form-group">
                         <label for="note-title">Judul Catatan</label>
                         <input type="text" id="note-title" placeholder="Tulis judul yang menarik..." required>
@@ -125,13 +125,21 @@ const noteAuthor = document.getElementById('note-author');
 const noteContent = document.getElementById('note-content');
 const previewContent = document.getElementById('preview-content');
 
-// --- FUNGSI LIVE PREVIEW ---
+// --- FUNGSI LIVE PREVIEW (DIPERBAIKI) ---
 function updatePreview() {
     const title = noteTitle.value || "Judul Catatan...";
     const author = noteAuthor.value;
     const rawContent = noteContent.value;
-    const contentHtml = rawContent.split('\n').map(line => line.trim() === '' ? '<br>' : `<p>${line}</p>`).join('');
-    previewContent.innerHTML = `<h1>${title}</h1>${author ? `<p class="author">Oleh: ${author}</p>` : ''}<hr style="border-color: #444; margin: 20px 0;"><div class="note-content">${contentHtml}</div>`;
+    
+    // UBAH CARA PROSES KONTEN: Ganti baris baru dengan <br> agar tag HTML lain tidak rusak
+    const contentHtml = rawContent.replace(/\n/g, '<br>');
+
+    previewContent.innerHTML = `
+        <h1>${title}</h1>
+        ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
+        <hr style="border-color: #444; margin: 20px 0;">
+        <div class="note-content">${contentHtml}</div>
+    `;
 }
 [noteTitle, noteAuthor, noteContent].forEach(el => el.addEventListener('input', updatePreview));
 document.addEventListener('DOMContentLoaded', updatePreview);
@@ -145,39 +153,48 @@ function getSelection() {
     };
 }
 
-function applyFormat(replacement) {
+function applyFormat(replacement, isBlock = false) {
     const selection = getSelection();
-    noteContent.value = noteContent.value.substring(0, selection.start) + replacement + noteContent.value.substring(selection.end);
+    let finalReplacement = replacement;
+    if (isBlock && selection.start > 0 && noteContent.value[selection.start - 1] !== '\n') {
+        finalReplacement = '\n' + finalReplacement;
+    }
+    noteContent.value = noteContent.value.substring(0, selection.start) + finalReplacement + noteContent.value.substring(selection.end);
     updatePreview();
 }
 
 function wrapText(tag) {
     const selection = getSelection();
-    if (selection.text.length === 0) { alert("Seleksi teks terlebih dahulu!"); return; }
+    if (selection.text.length === 0 && tag !== 'a') { alert("Seleksi teks terlebih dahulu!"); return; }
 
     let replacement;
+    let isBlock = false;
     if (tag === 'a') {
         const url = prompt("Masukkan URL untuk link:", "https://");
-        if (url) replacement = `<a href="${url}" target="_blank">${selection.text}</a>`;
+        if (url) replacement = `<a href="${url}" target="_blank">${selection.text || 'teks link'}</a>`;
         else return;
     } else if (tag.startsWith('box-')) {
-        replacement = `\n<div class="${tag}">\n<p>${selection.text}</p>\n</div>\n`;
+        replacement = `<div class="${tag}"><p>${selection.text}</p></div>`;
+        isBlock = true;
+    } else if (['h1', 'h2', 'h3'].includes(tag)) {
+        replacement = `<${tag}>${selection.text}</${tag}>`;
+        isBlock = true;
     } else {
         replacement = `<${tag}>${selection.text}</${tag}>`;
     }
-    applyFormat(replacement);
+    applyFormat(replacement, isBlock);
 }
 
 function formatList(tag) {
     const selection = getSelection();
     if (selection.text.length === 0) { alert("Seleksi beberapa baris teks untuk dijadikan list!"); return; }
-    const items = selection.text.split('\n').map(item => `    <li>${item}</li>`).join('\n');
-    const replacement = `\n<${tag}>\n${items}\n</${tag}>\n`;
-    applyFormat(replacement);
+    const items = selection.text.split('\n').map(item => `\t<li>${item}</li>`).join('\n');
+    const replacement = `<${tag}>\n${items}\n</${tag}>`;
+    applyFormat(replacement, true);
 }
 
 function insertTable() {
-    const tableTemplate = `\n<table class="styled-table">
+    const tableTemplate = `<table class="styled-table">
     <thead>
         <tr>
             <th>Header 1</th>
@@ -189,22 +206,19 @@ function insertTable() {
             <td>Data 1</td>
             <td>Data 2</td>
         </tr>
-        <tr>
-            <td>Data 3</td>
-            <td>Data 4</td>
-        </tr>
     </tbody>
-</table>\n`;
-    applyFormat(tableTemplate);
+</table>`;
+    applyFormat(tableTemplate, true);
 }
 
-// --- FUNGSI GENERATE & COPY ---
-function generateAndCopy(event) {
+// --- FUNGSI GENERATE & COPY HTML ---
+function generateHtml(event) {
     event.preventDefault();
     const title = noteTitle.value;
     const author = noteAuthor.value;
     const rawContent = noteContent.value;
-    const contentHtml = rawContent.split('\n').map(line => `        <p>${line}</p>`).join('\n');
+    // Gunakan logika yang sama dengan preview untuk konsistensi
+    const contentHtml = rawContent.replace(/\n/g, '<br>\n'); 
     const description = rawContent.substring(0, 155).replace(/\n/g, ' ') + '...';
     const fileName = (title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '') || 'catatan-baru') + '.html';
 
@@ -226,10 +240,10 @@ function generateAndCopy(event) {
         .container { background-color: #1a1a1a; padding: 25px 40px; border-radius: 8px; border: 1px solid #444; max-width: 700px; width: 100%; margin: 20px auto; }
         h1, h2, h3 { text-align: center; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
         .author { text-align: center; margin-top: -15px; color: #a0a0a0; font-style: italic; }
-        .note-content p { margin-bottom: 1.2em; }
+        .note-content { word-wrap: break-word; }
         a { color: #ff4136; text-decoration: none; } a:hover { text-decoration: underline; }
         ul, ol { padding-left: 25px; }
-        .box-warning, .box-good, .box-caution { margin: 1.5em 0; padding: 1px 20px; border-radius: 6px; border-left: 5px solid; }
+        .box-warning, .box-good, .box-caution { margin: 1.5em 0; padding: 15px 20px; border-radius: 6px; border-left: 5px solid; }
         .box-warning { border-color: #ff4136; background-color: rgba(255, 65, 54, 0.05); }
         .box-good { border-color: #2ecc71; background-color: rgba(46, 204, 113, 0.05); }
         .box-caution { border-color: #f39c12; background-color: rgba(243, 156, 18, 0.05); }
@@ -252,7 +266,7 @@ function generateAndCopy(event) {
     \${author ? \`<p class="author">Oleh: \${author}</p>\` : ''}
     <hr style="border-color: #444; margin: 30px 0;">
     <div class="note-content">
-\${contentHtml}
+\${contentHtml.replace(/<br>/g, '\\n        <br>\\n')}
     </div>
 </div>
 <footer>
@@ -279,8 +293,7 @@ function copyCode() {
             icon.className = 'fas fa-copy';
             text.textContent = 'Salin Kode';
         }, 2000);
-    }).catch(err => {
-        console.warn('Gagal salin otomatis, menjalankan fallback...', err);
+    }).catch(() => {
         try {
             codeToCopy.select();
             document.execCommand('copy');
