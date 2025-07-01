@@ -3,12 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Prompt - Personal Trainer AI</title>
+    
+    <title>Generator Prompt Workout - LCHP Tools</title>
+    <meta name="description" content="Buat prompt workout yang detail dan personal untuk AI dengan mengisi kuesioner singkat. Bagian dari LCHP Tools.">
+    
+    <link rel="icon" type="image/png" href="https://lexiiz3417.github.io/lchp/lchpfav.png">
+    
+    <meta property="og:title" content="Generator Prompt Workout - LCHP Tools">
+    <meta property="og:description" content="Buat prompt workout yang detail dan personal untuk AI dengan mengisi kuesioner singkat.">
+    <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
+    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/tools/namafile.html"> 
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <style>
+        /* Semua CSS tetap sama... */
         body {
             font-family: 'Courier Prime', 'Courier New', Courier, monospace;
             background-color: #0d0d0d;
@@ -129,11 +141,10 @@
             background-color: #ff4136;
             border: 1px solid #ff4136;
             color: #fff;
-            /* Style baru untuk mengakomodasi ikon */
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 10px; /* Jarak antara ikon dan teks */
+            gap: 10px;
         }
         #copy-button:hover {
             background-color: #fff;
@@ -148,7 +159,7 @@
         .back-button {
             position: fixed;
             bottom: 25px;
-            right: 50px;
+            right: 25px;
             z-index: 1000;
             background-color: #2c2c2c;
             padding: 10px;
@@ -194,7 +205,7 @@
 
 <div class="container">
     <h1>Personal Trainer AI</h1>
-    <p class="subtitle">Buat prompt workout paling detail untuk dirimu.</p>
+    <p class="subtitle">Buat prompt workout paling detailbuat diri lo.</p>
     
     <p class="warning-text">Isi sesuai dengan kondisi tubuh lo sekarang, kesampingkan ego!</p>
 
@@ -253,15 +264,14 @@
 </footer>
 
 <script>
+    // Seluruh JavaScript tetap sama...
     const workoutForm = document.getElementById('workout-form');
     const resultContainer = document.getElementById('result-container');
     const promptOutput = document.getElementById('prompt-output');
     const copyButton = document.getElementById('copy-button');
 
-    // ... (Fungsi workoutForm.addEventListener tetap sama) ...
     workoutForm.addEventListener('submit', function(e) {
         e.preventDefault();
-
         const data = {
             goal: document.getElementById('main_goal').value,
             age: document.getElementById('age').value,
@@ -273,7 +283,6 @@
             preferences: document.getElementById('preferences').value || 'Tidak ada preferensi khusus, berikan rekomendasi terbaik.',
             lifestyle: document.getElementById('lifestyle').value || 'Tidak ada data tambahan.',
         };
-
         const prompt = `
 **PERAN DAN TUJUAN ANDA:**
 Anda adalah seorang Pelatih Pribadi (Personal Trainer) dan Ahli Gizi bersertifikasi dengan pengalaman puluhan tahun. Tugas Anda adalah membuatkan saya sebuah strategi kebugaran holistik yang sangat personal, aman, dan efektif berdasarkan data klien yang saya berikan di bawah ini. Jawaban Anda harus profesional, mendalam, dan memotivasi.
@@ -320,39 +329,28 @@ Anda adalah seorang Pelatih Pribadi (Personal Trainer) dan Ahli Gizi bersertifik
 6.  **Nada & Motivasi:**
     * Sampaikan semua informasi dengan nada yang suportif dan memotivasi, seolah-olah Anda adalah pelatih pribadi saya. Akhiri dengan beberapa kalimat penyemangat.
 `;
-        
         promptOutput.textContent = prompt.trim();
         resultContainer.style.display = 'block';
-        
-        // Reset tombol ke kondisi awal setiap kali prompt baru dibuat
         const icon = copyButton.querySelector('i');
         const text = copyButton.querySelector('.button-text');
         icon.className = 'fas fa-copy';
         text.textContent = 'Salin Prompt';
-
         resultContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
     });
 
-
-    // --- FUNGSI TOMBOL SALIN BARU YANG LEBIH CANGGIH ---
     copyButton.addEventListener('click', function() {
         const textToCopy = promptOutput.textContent;
         const icon = this.querySelector('i');
         const text = this.querySelector('.button-text');
-
         if (!textToCopy) return;
-
         navigator.clipboard.writeText(textToCopy).then(() => {
-            // Sukses: Ubah ikon dan teks
             icon.className = 'fas fa-check';
             text.textContent = 'Tersalin!';
             setTimeout(() => {
-                // Kembalikan ke semula
                 icon.className = 'fas fa-copy';
                 text.textContent = 'Salin Prompt';
             }, 2000);
         }).catch(err => {
-            // Gagal (Fallback): Pilih semua teks
             console.warn('Gagal salin otomatis, menjalankan fallback (pilih teks). Error:', err);
             try {
                 const selection = window.getSelection();
@@ -360,12 +358,9 @@ Anda adalah seorang Pelatih Pribadi (Personal Trainer) dan Ahli Gizi bersertifik
                 range.selectNodeContents(promptOutput);
                 selection.removeAllRanges();
                 selection.addRange(range);
-                
-                // Ubah teks untuk memberi instruksi
-                icon.className = 'fas fa-copy'; // Ikon tetap copy
+                icon.className = 'fas fa-copy';
                 text.textContent = 'Teks Terpilih! (Tekan Ctrl+C)';
                 setTimeout(() => {
-                    // Kembalikan ke semula
                     text.textContent = 'Salin Prompt';
                 }, 3000);
             } catch (e) {
