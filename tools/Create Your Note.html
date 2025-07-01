@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Create a Note - LCHP Tools</title>
+    <meta name="description" content="Alat untuk membuat halaman catatan baru dengan tema dan format standar LCHP.">
+    
+    <link rel="icon" type="image/png" href="https://lexiiz3417.github.io/lchp/lchpfav.png">
+    
+    <meta property="og:title" content="Create a Note - LCHP Tools">
+    <meta property="og:description" content="Alat untuk membuat halaman catatan baru dengan tema dan format standar LCHP.">
+    <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
+    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/tools/create-a-note.html"> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #1a1a1a;
+            padding: 25px 40px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            max-width: 700px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        p.subtitle {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #a0a0a0;
+        }
+        .form-group { margin-bottom: 22px; }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #f0f0f0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: inherit;
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 200px;
+        }
+        input:focus, textarea:focus {
+            border-color: #ffffff;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #fff;
+            border-radius: 4px;
+            background-color: #1a1a1a;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            font-family: inherit;
+            text-transform: uppercase;
+        }
+        button:hover {
+            background-color: #ffffff;
+            color: #0d0d0d;
+        }
+        #result-area {
+            margin-top: 30px;
+            display: none;
+        }
+        #download-button {
+            background-color: #ff4136;
+            border: 1px solid #ff4136;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        #download-button:hover {
+            background-color: #fff;
+            color: #ff4136;
+        }
+        .back-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+        }
+        .back-button a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 18px;
+            background-color: #2c2c2c;
+            padding: 10px;
+            border-radius: 50px;
+            border: 1px solid #555;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="floating-icon back-button">
+    <a href="https://lexiiz3417.github.io/lchp" target="_blank" title="Kembali ke LCHP Notes">
+        <i class="fas fa-chevron-circle-left"></i>
+    </a>
+</div>
+
+<div class="container">
+    <h1>Create a Note</h1>
+    <p class="subtitle">Buat file catatan HTML baru dengan format standar LCHP.</p>
+
+    <form id="note-creator-form">
+        <div class="form-group">
+            <label for="note-title">Judul Catatan</label>
+            <input type="text" id="note-title" placeholder="Tulis judul yang menarik..." required>
+        </div>
+        <div class="form-group">
+            <label for="note-author">Nama Penulis</label>
+            <input type="text" id="note-author" placeholder="Nama Anda (opsional)">
+        </div>
+        <div class="form-group">
+            <label for="note-content">Isi Catatan</label>
+            <textarea id="note-content" placeholder="Tulis catatan Anda di sini. Setiap baris baru akan menjadi paragraf baru." required></textarea>
+        </div>
+        <button type="submit">
+            <i class="fas fa-cogs"></i> Generate File
+        </button>
+    </form>
+
+    <div id="result-area">
+        <hr style="border-color: #444; margin: 30px 0;">
+        <h3><i class="fas fa-check-circle" style="color: #2ecc71;"></i> File Berhasil Dibuat!</h3>
+        <p class="subtitle">Klik tombol di bawah untuk mengunduh file HTML Anda.</p>
+        <button id="download-button">
+            <i class="fas fa-download"></i>
+            <span id="download-text">Unduh File</span>
+        </button>
+    </div>
+</div>
+
+<script>
+document.getElementById('note-creator-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // 1. Ambil semua input dari pengguna
+    const title = document.getElementById('note-title').value;
+    const author = document.getElementById('note-author').value;
+    const rawContent = document.getElementById('note-content').value;
+
+    // 2. Proses konten: ubah setiap baris baru menjadi paragraf <p>
+    const contentHtml = rawContent.split('\n')
+        .filter(line => line.trim() !== '') // Abaikan baris kosong
+        .map(line => `        <p>${line.trim()}</p>`) // Bungkus setiap baris dengan tag <p>
+        .join('\n');
+
+    // 3. Buat deskripsi singkat untuk meta tag (ambil 155 karakter pertama)
+    const description = rawContent.substring(0, 155).replace(/\n/g, ' ') + '...';
+
+    // 4. Buat nama file yang aman dari judul
+    const fileName = title.toLowerCase()
+        .replace(/\s+/g, '-') // Ganti spasi dengan -
+        .replace(/[^\w\-]+/g, '') // Hapus karakter non-alfanumerik
+        .replace(/\-\-+/g, '-') // Ganti -- ganda dengan - tunggal
+        .replace(/^-+/, '') // Hapus - di awal
+        .replace(/-+$/, ''); // Hapus - di akhir
+    
+    const fullFileName = `${fileName || 'tanpa-judul'}.html`;
+
+    // 5. Buat seluruh struktur HTML sebagai string menggunakan template literal
+    const generatedHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - LCHP Notes</title>
+    <meta name="description" content="${description}">
+    
+    <link rel="icon" type="image/png" href="https://lexiiz3417.github.io/lchp/lchpfav.png">
+    
+    <meta property="og:title" content="${title} - LCHP Notes">
+    <meta property="og:description" content="${description}">
+    <meta property="og:image" content="https://lexiiz3417.github.io/lchp/lchp.png">
+    <meta property="og:url" content="https://lexiiz3417.github.io/lchp/notes/${fullFileName}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background-color: #0d0d0d; color: #e0e0e0; line-height: 1.7; margin: 0; padding: 20px; }
+        .container { background-color: #1a1a1a; padding: 25px 40px; border-radius: 8px; border: 1px solid #444; max-width: 700px; width: 100%; margin: 20px auto; }
+        h1 { color: #ffffff; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        .author { text-align: center; margin-top: -15px; color: #a0a0a0; font-style: italic; }
+        .note-content p { margin-bottom: 1.2em; }
+        .back-button { position: fixed; bottom: 25px; right: 25px; z-index: 1000; }
+        .back-button a { display: flex; align-items: center; text-decoration: none; font-size: 22px; color: #fff; }
+        footer { margin-top: 40px; color: #888; font-size: 14px; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="floating-icon back-button">
+    <a href="https://lexiiz3417.github.io/lchp/" target="_blank" title="Kembali ke LCHP Notes">
+        <i class="fas fa-chevron-circle-left"></i>
+    </a>
+</div>
+
+<div class="container">
+    <h1>${title}</h1>
+    ${author ? `<p class="author">Oleh: ${author}</p>` : ''}
+    <hr style="border-color: #444; margin: 30px 0;">
+    <div class="note-content">
+${contentHtml}
+    </div>
+</div>
+
+<footer>
+    oleh Lexiiz3417
+</footer>
+</body>
+</html>`;
+
+    // 6. Siapkan tombol download
+    const blob = new Blob([generatedHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const downloadButton = document.getElementById('download-button');
+    
+    downloadButton.href = url;
+    downloadButton.download = fullFileName;
+    document.getElementById('download-text').textContent = `Unduh ${fullFileName}`;
+    
+    // 7. Tampilkan area hasil
+    document.getElementById('result-area').style.display = 'block';
+
+    // Hapus event listener lama dan tambahkan yang baru untuk mencegah multiple download
+    const newDownloadButton = downloadButton.cloneNode(true);
+    downloadButton.parentNode.replaceChild(newDownloadButton, downloadButton);
+    newDownloadButton.id = 'download-button';
+    newDownloadButton.href = url;
+    newDownloadButton.download = fullFileName;
+});
+
+</script>
+</body>
+</html>
